@@ -1,42 +1,13 @@
-import { useState, useEffect } from "react";
-
-import Table from "@mui/material/Table";
-import TableBody from "@mui/material/TableBody";
-//Comentado porque se esta usando otra importacion similar para modificar el estilo de la tabla
-// import TableCell from "@mui/material/TableCell";
-import { styled } from '@mui/material/styles';
-import TableCell, { tableCellClasses } from '@mui/material/TableCell';
-import TableContainer from "@mui/material/TableContainer";
-import TableHead from "@mui/material/TableHead";
-import TableRow from "@mui/material/TableRow";
-import Card from '@mui/material/Card';
-import Typography from "@mui/material/Typography";
-
-import Button from '@mui/material/Button';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditSquareIcon from '@mui/icons-material/EditSquare';
-
-import api from "../utils/api.js";
-
-import Tooltip from '@mui/material/Tooltip';
-
-import Dialogo from "./Dialogo.jsx";
-
-import { DataGrid } from '@mui/x-data-grid';
-
+import Button from '@mui/material/Button';
 import Chip from '@mui/material/Chip';
-
-// Estilo para la tabla, seguir mirando la documentacion de MUI
-//Se pone afuera por que si no da error de renderizado
-const StyledTableCell = styled(TableCell)(({ theme }) => ({
-  [`&.${tableCellClasses.head}`]: {
-    backgroundColor: theme.palette.common.black,
-    color: theme.palette.common.white,
-  },
-  [`&.${tableCellClasses.body}`]: {
-    fontSize: 14,
-  },
-}));
+import Tooltip from '@mui/material/Tooltip';
+import Typography from "@mui/material/Typography";
+import { DataGrid } from '@mui/x-data-grid';
+import { useEffect, useState } from "react";
+import api from "../utils/api.js";
+import Dialogo from "./Dialogo.jsx";
 
 function ListadoDonaciones() {
   const [datos, setDatos] = useState([]);
@@ -53,7 +24,7 @@ function ListadoDonaciones() {
       try {
         const respuesta = await api.get("/donaciones/");
 
-        // Actualizamos los datos de directores
+        // Actualizamos los datos de las donaciones
         setDatos(respuesta.datos);
         // Y no tenemos errores
         setError(null);
@@ -107,8 +78,9 @@ function ListadoDonaciones() {
     );
   }
 
+  // Columnas de la tabla
   const columns = [
-    { field: 'id_donacion', headerName: 'ID', width: 80 },
+    { field: 'id_donacion', headerName: 'ID', width: 70 },
     {
       field: 'nombre_campana',
       headerName: 'Nombre Campaña',
@@ -116,8 +88,7 @@ function ListadoDonaciones() {
       // Usamos valueGetter para entrar en el objeto anidado
       valueGetter: (value, row) => {
         // "row" es la fila completa. Entramos al alias y luego al nombre.
-        // El "?." es por seguridad, por si alguna donación viene sin campaña.
-        return row.id_campana_campaña?.nombre_campana || 'Sin campaña';
+        return row.id_campana_campaña.nombre_campana || "Sin campaña";
       }
     },
     {
@@ -132,7 +103,7 @@ function ListadoDonaciones() {
       headerName: 'Peso Donante',
       align: 'center',
       headerAlign: "center",
-      width: 150,
+      width: 140,
     },
     {
       field: 'fecha_donacion',
@@ -140,6 +111,10 @@ function ListadoDonaciones() {
       align: 'center',
       headerAlign: "center",
       width: 150,
+      renderCell: (params) => {
+        // Formato de fecha que se pueda leer
+        return new Date(params.value).toLocaleDateString("es-ES");
+      },
     },
     {
       field: 'es_primera_vez',
@@ -160,7 +135,7 @@ function ListadoDonaciones() {
       headerName: 'Grupo Sanguíneo',
       align: 'center',
       headerAlign: "center",
-      width: 150,
+      width: 140,
     },
     {
       field: 'acciones',
@@ -175,7 +150,7 @@ function ListadoDonaciones() {
         return (
           <>
             <Tooltip
-              title="Borrar Campaña"
+              title="Borrar Donación"
               arrow
               disableInteractive
               slotProps={{
@@ -201,7 +176,7 @@ function ListadoDonaciones() {
             </Tooltip>
 
             <Tooltip
-              title="Editar Campaña"
+              title="Editar Donación"
               arrow
               disableInteractive
               slotProps={{
@@ -221,7 +196,7 @@ function ListadoDonaciones() {
                 color="primary"
                 onClick={() => { }}
                 sx={{ mx: 2, position: 'relative', }}
-                href="/campañas/new"
+                href={`/donaciones/edit/${params.id}`}
               >
                 <EditSquareIcon />
               </Button>
@@ -235,59 +210,7 @@ function ListadoDonaciones() {
 
   return (
     <>
-      <Typography variant="h4" align="center" sx={{ my: 3, mt: 11 }}>Listado de Donaciones</Typography>
-
-      {/*<TableContainer component={Card}>
-        <Table stickyHeader aria-label="Tabla de Campañas">
-          <TableHead>
-            <TableRow>
-              <StyledTableCell>Nombre</StyledTableCell>
-              <StyledTableCell align="center">Objetivo Litros Sangre</StyledTableCell>
-              <StyledTableCell align="center">Fecha Inicio</StyledTableCell>
-              <StyledTableCell align="center">Fecha Fin</StyledTableCell>
-              <StyledTableCell align="center">Campaña Urgente</StyledTableCell>
-              <StyledTableCell align="center">Acciones</StyledTableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {datos.map((row) => (
-              <TableRow key={row.id_campana}>
-                <TableCell>{row.nombre_campana}</TableCell>
-                <TableCell align="center">{row.objetivo_litros_campana}</TableCell>
-                <TableCell align="center">{row.fecha_inicio_campana}</TableCell>
-                <TableCell align="center">{row.fecha_fin_campana}</TableCell>
-                <TableCell align="center">{row.urgente_campana ? <Typography variant="h6" color="success">Sí</Typography> : <Typography variant="h6" color="error">No</Typography>}</TableCell>
-                <TableCell>
-                  <Tooltip
-                    title="Borrar Campaña"
-                    arrow
-                    disableInteractive
-                    slotProps={{
-                      popper: {
-                        modifiers: [
-                          {
-                            name: 'offset',
-                            options: {
-                              offset: [0, -7],
-                            },
-                          },
-                        ],
-                      },
-                    }}>
-                    <Button
-                      variant="contained"
-                      color="error"
-                      onClick={() => handleDelete(row.id_campana)}
-                    >
-                      <DeleteIcon />
-                    </Button>
-                  </Tooltip>
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer> */}
+      <Typography variant="h4" align="center" sx={{ my: 3 }}>Listado de Donaciones</Typography>
 
       <DataGrid
         rows={datos}
@@ -303,7 +226,7 @@ function ListadoDonaciones() {
         pageSizeOptions={[5]}
       />
 
-      {/* Dialogo para cuando se borra una campaña */}
+      {/* Dialogo para cuando se borra una donación */}
       <Dialogo
         open={openDialog}
         onClose={() => handleDialogClose()}

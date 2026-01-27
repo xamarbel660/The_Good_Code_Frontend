@@ -1,7 +1,7 @@
 import Button from "@mui/material/Button";
 import Grid from "@mui/material/Grid";
 import Paper from "@mui/material/Paper";
-import Switch from "@mui/material/Switch";
+import Switch from '@mui/material/Switch';
 import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
@@ -10,16 +10,22 @@ import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import dayjs from "dayjs";
 import "dayjs/locale/es";
 import { useEffect, useState } from "react";
+import { useParams } from "react-router";
 import { useNavigate } from "react-router-dom";
 import api from "../utils/api.js";
 import Dialogo from "./Dialogo.jsx";
 
-function AltaCampaña() {
+
+function ModificacionCampaña() {
+    //Obtenemos el id de la campaña
+    const { id } = useParams();
+
     const navigate = useNavigate();
 
     const [campaña, setCampaña] = useState({
+        id_campana: 0,
         nombre_campana: "",
-        objetivo_litros_campana: 0.0,
+        objetivo_litros_campana: 0.00,
         fecha_inicio_campana: "",
         fecha_fin_campana: "",
         urgente_campana: false,
@@ -39,15 +45,32 @@ function AltaCampaña() {
     const [dialogSeverity, setDialogSeverity] = useState("success");
 
     useEffect(() => {
-        async function fetchCreateCampaña() {
+        async function fetchRecuperarCampaña() {
             try {
-                const respuesta = await api.post("/campanas/", campaña);
+                const respuesta = await api.get(`/campanas/${id}`);
+                setCampaña(respuesta.datos);
 
-                setDialogMessage(respuesta.mensaje); // Mensaje
+            } catch (error) {
+                setDialogMessage(error.mensaje || "Error al buscar la campaña");
+                setDialogSeverity("error"); // Color rojo
+                setOpenDialog(true); // Abrir el diálogo
+            }
+            // Pase lo que pase hemos terminado el proceso de actualización
+        }
+        fetchRecuperarCampaña();
+
+    }, []);
+
+    useEffect(() => {
+        async function fetchUpdateCampaña() {
+            try {
+                await api.put(`/campanas/${id}`, campaña);
+
+                setDialogMessage("Campaña actualizada correctamente"); // Mensaje
                 setDialogSeverity("success"); // Color verde
                 setOpenDialog(true); // Abrir el diálogo
             } catch (error) {
-                setDialogMessage(error.mensaje || "Error al crear la campaña");
+                setDialogMessage(error.mensaje || "Error al actualizar la campaña");
                 setDialogSeverity("error"); // Color rojo
                 setOpenDialog(true); // Abrir el diálogo
             }
@@ -55,16 +78,15 @@ function AltaCampaña() {
             setIsUpdating(false);
         }
 
-        if (isUpdating) fetchCreateCampaña();
+        if (isUpdating) fetchUpdateCampaña();
     }, [isUpdating]);
 
     function handleChange(e) {
-        // Si el campo es urgente_campana, se actualiza con el valor del switch
-        if (e.target.name == "urgente_campana") {
-            setCampaña({ ...campaña, [e.target.name]: e.target.checked });
-        } else {
-            setCampaña({ ...campaña, [e.target.name]: e.target.value });
-        }
+        setCampaña({ ...campaña, [e.target.name]: e.target.value });
+    }
+
+    function handleChangeSwitch(e) {
+        setCampaña({ ...campaña, [e.target.name]: e.target.checked });
     }
 
     function handleClick() {
@@ -79,7 +101,7 @@ function AltaCampaña() {
     function handleDialogClose() {
         setOpenDialog(false);
 
-        if (dialogSeverity === "success") navigate("/");
+        navigate("/campañas");
     }
 
     function validarDatos() {
@@ -99,7 +121,7 @@ function AltaCampaña() {
         }
 
         // Validación de la objetivo_litros_campana
-        if (campaña.objetivo_litros_campana < 50.0 || campaña.objetivo_litros_campana > 1000.00) {
+        if (campaña.objetivo_litros_campana < 50.00 || campaña.objetivo_litros_campana > 1000.00) {
             valido = false;
             objetoValidacion.objetivo_litros_campana = false;
         }
@@ -111,7 +133,7 @@ function AltaCampaña() {
         }
 
         // Validación de la fecha_fin_campana como requerida
-        if (!campaña.fecha_fin_campana) {
+        if (!campaña.fecha_fin_campana || campaña.fecha_fin_campana < campaña.fecha_inicio_campana) {
             valido = false;
             objetoValidacion.fecha_fin_campana = false;
         }
@@ -122,6 +144,7 @@ function AltaCampaña() {
         return valido;
     }
 
+
     return (
         <>
             <Grid
@@ -130,12 +153,11 @@ function AltaCampaña() {
                 sx={{
                     justifyContent: "center",
                     alignItems: "center",
-                }}
-            >
+                }}>
                 <Grid item size={{ xs: 12, sm: 9, md: 7 }}>
                     <Paper elevation={6} sx={{ mt: 3, p: 3, maxWidth: 900, mx: "auto" }}>
                         <Typography variant="h4" align="center" sx={{ mb: 3 }}>
-                            Alta de Campaña
+                            Modificación de Campaña
                         </Typography>
 
                         <Grid
@@ -144,14 +166,13 @@ function AltaCampaña() {
                             sx={{
                                 justifyContent: "center",
                                 alignItems: "center",
-                            }}
-                        >
+                            }}>
                             {/* Nombre de la campaña */}
                             <Grid item size={{ xs: 10 }}>
                                 <TextField
                                     required
                                     fullWidth
-                                    id="nombre_campana"
+                                    id="name"
                                     label="Nombre de la Campaña"
                                     name="nombre_campana"
                                     type="text"
@@ -160,7 +181,7 @@ function AltaCampaña() {
                                     onChange={handleChange}
                                     error={!isCamposValidos.nombre_campana}
                                     helperText={
-                                        !isCamposValidos.nombre_campana && "El nombre no es valido debe tener entre 10 y 100 caracteres."
+                                        !isCamposValidos.nombre_campana && "El nombre es pequeño."
                                     }
                                 />
                             </Grid>
@@ -169,23 +190,20 @@ function AltaCampaña() {
                                 <TextField
                                     required
                                     fullWidth
-                                    id="objetivo_litros_campana"
+                                    id="name"
                                     label="Objetivo Litros de Sangre"
                                     name="objetivo_litros_campana"
                                     type="number"
                                     slotProps={{
                                         htmlInput: {
-                                            min: 50.0,
-                                            max: 1000.0,
-                                            step: 2.5,
-                                        },
+                                            max: 1000.00, step: 2.5,
+                                        }
                                     }}
                                     value={campaña.objetivo_litros_campana}
                                     onChange={handleChange}
                                     error={!isCamposValidos.objetivo_litros_campana}
                                     helperText={
-                                        !isCamposValidos.objetivo_litros_campana &&
-                                        "Como minimo de 50.00 y como maximo de 1000.00."
+                                        !isCamposValidos.objetivo_litros_campana && "Como minimo el objetivo debe de ser de 50.00."
                                     }
                                 />
                             </Grid>
@@ -197,24 +215,18 @@ function AltaCampaña() {
                                 >
                                     <DatePicker
                                         label="Inicio de la campaña"
-                                        id="fecha_inicio_campana"
                                         name="fecha_inicio_campana"
-                                        minDate={dayjs()}
+                                        sx={{}}
                                         slotProps={{
                                             textField: {
                                                 required: true,
                                                 error: !isCamposValidos.fecha_inicio_campana,
-                                                helperText: !isCamposValidos.fecha_inicio_campana
-                                                    ? "La fecha es obligatoria"
-                                                    : "",
+                                                helperText: !isCamposValidos.fecha_inicio_campana ? "La fecha es obligatoria" : "",
                                             },
                                         }}
                                         value={
-                                            campaña.fecha_inicio_campana
-                                                ? dayjs(campaña.fecha_inicio_campana)
-                                                : null
+                                            campaña.fecha_inicio_campana ? dayjs(campaña.fecha_inicio_campana) : null
                                         }
-                                        // Asi es como se manejan los cambios en los DatePickers
                                         onChange={(newValue) =>
                                             setCampaña({
                                                 ...campaña,
@@ -227,32 +239,23 @@ function AltaCampaña() {
                             <Grid item size={{ xs: 10 }}>
                                 <LocalizationProvider
                                     dateAdapter={AdapterDayjs}
-                                    // Para que el formato de la fecha sea en español
                                     adapterLocale="es"
                                 >
                                     <DatePicker
                                         label="Fin de la campaña"
-                                        id="fecha_fin_campana"
                                         name="fecha_fin_campana"
-                                        // Ponemos que la fecha minima sea la fecha de inicio de la campaña
-                                        minDate={
-                                            campaña.fecha_inicio_campana
-                                                ? dayjs(campaña.fecha_inicio_campana)
-                                                : null
-                                        }
+                                        minDate={campaña.fecha_inicio_campana ? dayjs(campaña.fecha_inicio_campana) : null}
                                         slotProps={{
                                             textField: {
                                                 required: true,
                                                 error: !isCamposValidos.fecha_fin_campana,
                                                 helperText: !isCamposValidos.fecha_fin_campana
-                                                    ? "La fecha es obligatoria"
+                                                    ? "La fecha es obligatoria y no puede ser menor que la fecha de inicio"
                                                     : "",
                                             },
                                         }}
                                         value={
-                                            campaña.fecha_fin_campana && campaña.fecha_fin_campana >= campaña.fecha_inicio_campana
-                                                ? dayjs(campaña.fecha_fin_campana)
-                                                : null
+                                            campaña.fecha_fin_campana && campaña.fecha_fin_campana >= campaña.fecha_inicio_campana ? dayjs(campaña.fecha_fin_campana) : null
                                         }
                                         onChange={(newValue) =>
                                             setCampaña({
@@ -263,19 +266,18 @@ function AltaCampaña() {
                                     />
                                 </LocalizationProvider>
                             </Grid>
-
                             {/* ¿Campaña urgente? */}
                             <Grid item size={{ xs: 10 }}>
-                                <Typography variant="body1" align="start" sx={{ mb: 1 }}>
+                                <Typography variant="body1" align="start" sx={{ mb: 1, }}>
                                     ¿Es urgente? {campaña.urgente_campana ? "Sí" : "No"}
                                 </Typography>
                                 <Switch
                                     checked={campaña.urgente_campana}
                                     name="urgente_campana"
-                                    onChange={handleChange}
+                                    onChange={handleChangeSwitch}
+                                    slotProps={{ input: { 'aria-label': 'controlled' } }}
                                 />
                             </Grid>
-
                             {/* Botón de aceptar */}
                             <Grid
                                 item
@@ -293,6 +295,7 @@ function AltaCampaña() {
                                 </Button>
                             </Grid>
                         </Grid>
+
                     </Paper>
                 </Grid>
             </Grid>
@@ -307,4 +310,4 @@ function AltaCampaña() {
     );
 }
 
-export default AltaCampaña;
+export default ModificacionCampaña;

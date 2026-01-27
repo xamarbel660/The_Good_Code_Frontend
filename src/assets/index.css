@@ -1,12 +1,7 @@
+/* Estilos para que el contenido ocupe toda la pantalla y no tenga margenes */
 html,
 body {
     height: 100%;
     margin: 0;
     padding: 0;
-}
-
-#root {
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
 }

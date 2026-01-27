@@ -40,7 +40,7 @@ function Navbar() {
   const linkStyle = { color: "black", textDecoration: "none" };
 
   return (
-    <AppBar position="fixed" color="error">
+    <AppBar position="static" color="error">
       <Container maxWidth="xl">
         <Toolbar disableGutters>
           {/* Menú para resolución xs  */}
@@ -86,6 +86,13 @@ function Navbar() {
                   </Typography>
                 </Link>
               </MenuItem>
+              <MenuItem onClick={handleCloseNavMenu}>
+                <Link to="/campañas/parametrizado" style={linkStyle}>
+                  <Typography sx={{ textAlign: "center" }}>
+                    Listado de campañas parametrizado
+                  </Typography>
+                </Link>
+              </MenuItem>
               <Divider />
               <ListSubheader>Menú Donaciones</ListSubheader>
               <MenuItem onClick={handleCloseNavMenu}>
@@ -99,6 +106,13 @@ function Navbar() {
                 <Link to="/donaciones" style={linkStyle}>
                   <Typography sx={{ textAlign: "center" }}>
                     Listado de donaciones
+                  </Typography>
+                </Link>
+              </MenuItem>
+              <MenuItem onClick={handleCloseNavMenu}>
+                <Link to="/donaciones/parametrizado" style={linkStyle}>
+                  <Typography sx={{ textAlign: "center" }}>
+                    Listado de donaciones parametrizado
                   </Typography>
                 </Link>
               </MenuItem>
@@ -134,7 +148,7 @@ function Navbar() {
               Campañas
             </Button>
             <Menu
-              id="menu-directores"
+              id="menu-campañas"
               anchorEl={anclaMenuCampanas}
               anchorOrigin={{
                 vertical: "bottom",
@@ -163,6 +177,13 @@ function Navbar() {
                   </Typography>
                 </Link>
               </MenuItem>
+              <MenuItem onClick={handleCloseNavMenu}>
+                <Link to="/campañas/parametrizado" style={linkStyle}>
+                  <Typography sx={{ textAlign: "center" }}>
+                    Listado de campañas parametrizado
+                  </Typography>
+                </Link>
+              </MenuItem>
             </Menu>
 
             {/* Menú para donaciones en md */}
@@ -173,7 +194,7 @@ function Navbar() {
               Donaciones
             </Button>
             <Menu
-              id="menu-peliculas"
+              id="menu-donaciones"
               anchorEl={anclaMenuDonaciones}
               anchorOrigin={{
                 vertical: "bottom",
@@ -199,6 +220,13 @@ function Navbar() {
                 <Link to="/donaciones" style={linkStyle}>
                   <Typography sx={{ textAlign: "center" }}>
                     Listado de donaciones
+                  </Typography>
+                </Link>
+              </MenuItem>
+              <MenuItem onClick={handleCloseNavMenu}>
+                <Link to="/donaciones/parametrizado" style={linkStyle}>
+                  <Typography sx={{ textAlign: "center" }}>
+                    Listado de donaciones parametrizado
                   </Typography>
                 </Link>
               </MenuItem>

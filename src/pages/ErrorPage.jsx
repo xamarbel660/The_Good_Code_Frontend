@@ -1,10 +1,12 @@
-import { Outlet } from "react-router";
+import { Link, useRouteError } from "react-router-dom";
 import Footer from "../components/Footer";
 import Navbar from "../components/Navbar";
 
 import { Grid } from "@mui/material";
+export default function ErrorPage() {
+  const error = useRouteError();
+  console.error(error);
 
-function Home() {
   return (
     <>
       {/*minHeight: '100vh' -> Obliga a que la caja mida AL MENOS el 100% del alto de la ventana.
@@ -25,7 +27,12 @@ function Home() {
         {/*flexGrow: 1 -> ESTA ES LA CLAVE. Le dice a esta caja: 
           "Crece todo lo que puedas y empuja el footer hacia abajo". */}
         <Grid sx={{ flexGrow: 1, p: 2, width: '100%' }}>
-          <Outlet />
+          <h1>Oops!</h1>
+          <p>Ha ocurrido un error.</p>
+          <p>
+            <i>{error.statusText || error.message}</i>
+          </p>
+          <Link to="/">Volver a la página de inicio</Link>
         </Grid>
 
         <Grid>
@@ -37,5 +44,3 @@ function Home() {
     </>
   );
 }
-
-export default Home;
