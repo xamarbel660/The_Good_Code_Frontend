@@ -8,6 +8,7 @@ import { DataGrid } from '@mui/x-data-grid';
 import { useEffect, useState } from "react";
 import api from "../utils/api.js";
 import Dialogo from "./Dialogo.jsx";
+import { Grid } from '@mui/material';
 
 function ListadoCampañas() {
   const [datos, setDatos] = useState([]);
@@ -205,6 +206,7 @@ function ListadoCampañas() {
 
   return (
     <>
+    <Grid>
       <Typography variant="h4" align="center" sx={{ my: 3 }}>Listado de Campañas</Typography>
 
       <DataGrid
@@ -229,6 +231,8 @@ function ListadoCampañas() {
         dialogSeverity={dialogSeverity}
         dialogMessage={dialogMessage}
       />
+    </Grid>
+
 
     </>
   );

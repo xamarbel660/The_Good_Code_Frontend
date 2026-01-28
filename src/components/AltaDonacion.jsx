@@ -42,9 +42,10 @@ function AltaDonaciones() {
         fecha_donacion: "",
         es_primera_vez: false,
         grupo_sanguineo: "",
+        URL_image: "",
     });
 
-    const tiposSanguineos = ["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"];
+    const tiposSanguineos = ["A+", "A-", "B+", "B-", "AB+", "AB-", "0+", "0-"];
 
     // Validación de los campos
     const [isCamposValidos, setIsCamposValidos] = useState({
@@ -54,6 +55,7 @@ function AltaDonaciones() {
         fecha_donacion: true,
         es_primera_vez: true,
         grupo_sanguineo: true,
+        URL_image: true,
     });
 
     const [isUpdating, setIsUpdating] = useState(false);
@@ -132,6 +134,7 @@ function AltaDonaciones() {
             fecha_donacion: true,
             es_primera_vez: true,
             grupo_sanguineo: true,
+            URL_image: true,
         };
 
         // Validación del nombre_donante
@@ -170,12 +173,36 @@ function AltaDonaciones() {
             objetoValidacion.grupo_sanguineo = false;
         }
 
+        if (!isValidURL(donacion.URL_image)) {
+            valido = false;
+            objetoValidacion.URL_image = false;
+        }
+
         // Actualizamos con los campos correctos e incorrectos
         setIsCamposValidos(objetoValidacion);
 
         return valido;
     }
 
+
+    const isValidURL = (urlString) => {
+        var patronURL = new RegExp(
+            // valida protocolo (http o https)
+            "^(https?:\\/\\/)?" +
+            // valida nombre de dominio
+            "((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|" +
+            // valida OR dirección ip (v4)
+            "((\\d{1,3}\\.){3}\\d{1,3}))" +
+            // valida puerto y path
+            "(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*" +
+            // valida queries
+            "(\\?[;&a-z\\d%_.~+=-]*)?" +
+            // valida fragment locator
+            "(\\#[-a-z\\d_]*)?$",
+            "i"
+        );
+        return !!patronURL.test(urlString);
+    };
 
     return (
         <>
@@ -270,7 +297,7 @@ function AltaDonaciones() {
                             </Grid>
 
                             {/* Fecha de la donacion */}
-                            <Grid item size={{ xs: 10 }}>
+                            <Grid item size={{ xs: 5 }}>
                                 <LocalizationProvider
                                     dateAdapter={AdapterDayjs}
                                     adapterLocale="es"
@@ -303,7 +330,7 @@ function AltaDonaciones() {
                             </Grid>
 
                             {/* Grupo sanguineo */}
-                            <Grid item size={{ xs: 10 }}>
+                            <Grid item size={{ xs: 5 }}>
                                 <TextField
                                     required
                                     id="grupo_sanguineo"
@@ -320,6 +347,24 @@ function AltaDonaciones() {
                                     error={!isCamposValidos.grupo_sanguineo}
                                     helperText={
                                         !isCamposValidos.grupo_sanguineo && "Grupo sanguíneo erroneo (A+, AB-, 0+, etc...)."
+                                    }
+                                />
+                            </Grid>
+
+                            {/* URL Imagen */}
+                            <Grid item size={{ xs: 10 }}>
+                                <TextField
+                                    required
+                                    fullWidth
+                                    id="URL_image"
+                                    label="Url de la imagen"
+                                    name="URL_image"
+                                    type="text"
+                                    value={donacion.URL_image}
+                                    onChange={handleChange}
+                                    error={!isCamposValidos.URL_image}
+                                    helperText={
+                                        !isCamposValidos.URL_image && "Url de la imagen es obligatoria."
                                     }
                                 />
                             </Grid>

@@ -1,23 +1,30 @@
-import * as React from "react";
+import Brightness4Icon from '@mui/icons-material/Brightness4';
+import Brightness7Icon from '@mui/icons-material/Brightness7';
+import EmergencyIcon from '@mui/icons-material/Emergency';
+import MenuIcon from "@mui/icons-material/Menu";
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
-import Toolbar from "@mui/material/Toolbar";
-import IconButton from "@mui/material/IconButton";
-import Typography from "@mui/material/Typography";
-import Menu from "@mui/material/Menu";
-import MenuIcon from "@mui/icons-material/Menu";
-import EmergencyIcon from '@mui/icons-material/Emergency';
-import Container from "@mui/material/Container";
 import Button from "@mui/material/Button";
-import MenuItem from "@mui/material/MenuItem";
-import { Link } from "react-router";
+import Container from "@mui/material/Container";
 import Divider from "@mui/material/Divider";
+import IconButton from "@mui/material/IconButton";
 import ListSubheader from "@mui/material/ListSubheader";
+import Menu from "@mui/material/Menu";
+import MenuItem from "@mui/material/MenuItem";
+import Toolbar from "@mui/material/Toolbar";
+import Typography from "@mui/material/Typography";
+import * as React from "react";
+import { Link } from "react-router";
+import useThemeStore from '../stores/useThemeStore';
+
 
 function Navbar() {
   const [anclaMenuCampanas, setAnclaMenuCampanas] = React.useState(null);
   const [anclaMenuDonaciones, setAnclaMenuDonaciones] = React.useState(null);
   const [anclaMenuXS, setAnclaMenuXS] = React.useState(null);
+
+  //Recuperamos el modo (dark / light) y la función para cambiarlo (setMode)
+  const { mode, setMode } = useThemeStore();
 
   const handleClickMenuCampanas = (event) => {
     setAnclaMenuCampanas(event.currentTarget);
@@ -113,6 +120,13 @@ function Navbar() {
                 <Link to="/donaciones/parametrizado" style={linkStyle}>
                   <Typography sx={{ textAlign: "center" }}>
                     Listado de donaciones parametrizado
+                  </Typography>
+                </Link>
+              </MenuItem>
+              <MenuItem onClick={handleCloseNavMenu}>
+                <Link to="/donaciones/cards" style={linkStyle}>
+                  <Typography sx={{ textAlign: "center" }}>
+                    Listado de donaciones cards
                   </Typography>
                 </Link>
               </MenuItem>
@@ -230,10 +244,26 @@ function Navbar() {
                   </Typography>
                 </Link>
               </MenuItem>
+              <MenuItem onClick={handleCloseNavMenu}>
+                <Link to="/donaciones/cards" style={linkStyle}>
+                  <Typography sx={{ textAlign: "center" }}>
+                    Listado de donaciones cards
+                  </Typography>
+                </Link>
+              </MenuItem>
             </Menu>
-              {/* Fin menú para donaciones en md */}
+            {/* Fin menú para donaciones en md */}
+
           </Box>
           {/* Fin menú para resolución md */}
+
+          {/* Botón para cambiar el tema de color */}
+          <Box sx={{ ml: 2 }}>
+            <IconButton sx={{ ml: 1 }} onClick={setMode} color="inherit">
+              {mode === 'dark' ? <Brightness7Icon /> : <Brightness4Icon />}
+            </IconButton>
+          </Box>
+
         </Toolbar>
       </Container>
     </AppBar>

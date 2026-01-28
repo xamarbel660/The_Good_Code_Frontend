@@ -309,14 +309,14 @@ function ListadoDonacionesParametrizado() {
         }}
       >
         <Grid item size={{ xs: 12, sm: 9, md: 7 }}>
-          <Paper elevation={6} sx={{ mt: 3, p: 3, maxWidth: 900, mx: "auto" }}>
+          <Paper elevation={6} sx={{ my: 3, p: 3, maxWidth: 900, mx: "auto" }}>
             <Typography variant="h4" align="center" sx={{ mb: 3 }}>
-              Alta de Donación
+              Listado de Donaciones Parametrizado
             </Typography>
 
             <Grid
               container
-              spacing={2}
+              spacing={3}
               sx={{
                 justifyContent: "center",
                 alignItems: "center",
@@ -495,7 +495,7 @@ function ListadoDonacionesParametrizado() {
               >
                 <Button
                   variant="contained"
-                  sx={{ mt: 3 }}
+                  sx={{ mt: 3, mr: 2 }}
                   loading={isUpdating}
                   loadingPosition="end"
                   onClick={handleClean}

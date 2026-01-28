@@ -24,8 +24,7 @@ export default function ErrorPage() {
           <Navbar />
         </Grid>
 
-        {/*flexGrow: 1 -> ESTA ES LA CLAVE. Le dice a esta caja: 
-          "Crece todo lo que puedas y empuja el footer hacia abajo". */}
+        {/*flexGrow: 1 -> Hace que el contenido crezca y empuje el footer hacia abajo*/}
         <Grid sx={{ flexGrow: 1, p: 2, width: '100%' }}>
           <h1>Oops!</h1>
           <p>Ha ocurrido un error.</p>

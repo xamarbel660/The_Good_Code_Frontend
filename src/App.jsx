@@ -1,3 +1,5 @@
+import CssBaseline from '@mui/material/CssBaseline';
+import { ThemeProvider, createTheme } from '@mui/material/styles';
 import { createBrowserRouter } from "react-router";
 import { RouterProvider } from "react-router/dom";
 import AltaCampaña from "./components/AltaCampaña";
@@ -6,11 +8,14 @@ import Inicio from "./components/Inicio";
 import ListadoCampañas from "./components/ListadoCampañas";
 import ListadoCampañasParametrizado from "./components/ListadoCampañasParametrizado";
 import ListadoDonaciones from "./components/ListadoDonaciones";
+import ListadoDonacionesCard from './components/ListadoDonacionesCard';
 import ListadoDonacionesParametrizado from "./components/ListadoDonacionesParametrizado";
 import ModificacionCampaña from "./components/ModificacionCampaña";
 import ModificacionDonacion from "./components/ModificacionDonacion";
 import ErrorPage from "./pages/ErrorPage";
 import Home from "./pages/Home";
+import useThemeStore from './stores/useThemeStore';
+
 
 const router = createBrowserRouter([
   {
@@ -41,6 +46,10 @@ const router = createBrowserRouter([
         element: <ListadoDonaciones />,
       },
       {
+        path: "/donaciones/cards",
+        element: <ListadoDonacionesCard />,
+      },
+      {
         path: "/donaciones/parametrizado",
         element: <ListadoDonacionesParametrizado />,
       },
@@ -57,9 +66,22 @@ const router = createBrowserRouter([
 ]);
 
 function App() {
+  //Recuperamos el modo (dark / light) del localStorage
+  const mode = useThemeStore((state) => state.mode);
+  //Creamos el tema
+  const theme = createTheme({
+    palette: {
+      mode: mode,
+    }
+  });
+
   return (
     <>
-      <RouterProvider router={router} />
+      <ThemeProvider theme={theme}>
+        {/* CssBaseline aplica estilos base de MUI */}
+        <CssBaseline />
+        <RouterProvider router={router} />
+      </ThemeProvider>
     </>
   );
 }

@@ -1,15 +1,13 @@
 import { Outlet } from "react-router";
 import Footer from "../components/Footer";
 import Navbar from "../components/Navbar";
-
 import { Grid } from "@mui/material";
 
 function Home() {
   return (
     <>
       {/*minHeight: '100vh' -> Obliga a que la caja mida AL MENOS el 100% del alto de la ventana.
-        flexDirection: 'column' -> Organiza los hijos uno debajo de otro (verticalmente).
-        wrap="nowrap" -> Evita que se desborden cosas raras. */}
+        flexDirection: 'column' -> Organiza los hijos uno debajo de otro (verticalmente). */}
       <Grid
         container
         sx={{
@@ -22,8 +20,7 @@ function Home() {
           <Navbar />
         </Grid>
 
-        {/*flexGrow: 1 -> ESTA ES LA CLAVE. Le dice a esta caja: 
-          "Crece todo lo que puedas y empuja el footer hacia abajo". */}
+        {/*flexGrow: 1 -> Hace que el contenido crezca y empuje el footer hacia abajo*/}
         <Grid sx={{ flexGrow: 1, p: 2, width: '100%' }}>
           <Outlet />
         </Grid>

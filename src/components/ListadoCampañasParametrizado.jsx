@@ -39,8 +39,8 @@ function ListadoCampañasParametrizadas() {
     async function fetchRecuperarCampañas() {
       try {
         const respuesta = await api.get(
-          `/campanas?nombre_campana=${campaña.nombre_campana}&objetivo_litros_campana_min=${campaña.objetivo_litros_campana_min == -1 ? "" : campaña.objetivo_litros_campana_min}&objetivo_litros_campana_max=${campaña.objetivo_litros_campana_max == -1 ? "" : campaña.objetivo_litros_campana_max}&fecha_inicio_campana=${campaña.fecha_inicio_campana}&fecha_fin_campana=${campaña.fecha_fin_campana}`, 
-        // &urgente_campana=${campaña.urgente_campana}
+          `/campanas?nombre_campana=${campaña.nombre_campana}&objetivo_litros_campana_min=${campaña.objetivo_litros_campana_min == -1 ? "" : campaña.objetivo_litros_campana_min}&objetivo_litros_campana_max=${campaña.objetivo_litros_campana_max == -1 ? "" : campaña.objetivo_litros_campana_max}&fecha_inicio_campana=${campaña.fecha_inicio_campana}&fecha_fin_campana=${campaña.fecha_fin_campana}`,
+          // &urgente_campana=${campaña.urgente_campana}
         );
         setDatos(respuesta.datos);
       } catch (error) {
@@ -63,6 +63,18 @@ function ListadoCampañasParametrizadas() {
     if (isUpdating) return;
     setIsUpdating(true);
   }
+
+  function handleClean() {
+    setCampaña({
+      id_campana: 0,
+      nombre_campana: "",
+      objetivo_litros_campana_min: -1,
+      objetivo_litros_campana_max: -1,
+      fecha_inicio_campana: "",
+      fecha_fin_campana: "",
+    });
+  }
+
 
   // Borrado de una campaña
   async function handleDelete(id_campana) {
@@ -279,6 +291,7 @@ function ListadoCampañasParametrizadas() {
               >
                 <TextField
                   required
+                  fullWidth
                   id="objetivo_litros_campana_min"
                   label="Objetivo Litros de Sangre Minimo"
                   name="objetivo_litros_campana_min"
@@ -290,11 +303,19 @@ function ListadoCampañasParametrizadas() {
                       step: 2.5,
                     },
                   }}
-                  value={campaña.objetivo_litros_campana_min == -1 ? null:campaña.objetivo_litros_campana_min}
+                  value={campaña.objetivo_litros_campana_min === -1 ? "" : campaña.objetivo_litros_campana_min}
                   onChange={handleChange}
                 />
+              </Grid>
+
+              <Grid
+                item
+                size={{ xs: 10 }}
+                sx={{ display: "flex", justifyContent: "space-around" }}
+              >
                 <TextField
                   required
+                  fullWidth
                   id="objetivo_litros_campana_max"
                   label="Objetivo Litros de Sangre Máximo"
                   name="objetivo_litros_campana_max"
@@ -306,7 +327,7 @@ function ListadoCampañasParametrizadas() {
                       step: 2.5,
                     },
                   }}
-                  value={campaña.objetivo_litros_campana_max == -1 ? null:campaña.objetivo_litros_campana_max}
+                  value={campaña.objetivo_litros_campana_max == -1 ? "" : campaña.objetivo_litros_campana_max}
                   onChange={handleChange}
                 />
               </Grid>
@@ -322,6 +343,7 @@ function ListadoCampañasParametrizadas() {
                   adapterLocale="es"
                 >
                   <DatePicker
+
                     label="Inicio de la campaña"
                     name="fecha_inicio_campana"
                     sx={{ mx: 2 }}
@@ -343,7 +365,13 @@ function ListadoCampañasParametrizadas() {
                     }
                   />
                 </LocalizationProvider>
+              </Grid>
 
+              <Grid
+                item
+                size={{ xs: 10 }}
+                sx={{ display: "flex", justifyContent: "space-around" }}
+              >
                 <LocalizationProvider
                   dateAdapter={AdapterDayjs}
                   adapterLocale="es"
@@ -377,12 +405,21 @@ function ListadoCampañasParametrizadas() {
                 </LocalizationProvider>
               </Grid>
 
-              {/* Botón de aceptar */}
+              {/* Botón de aceptar y limpiar */}
               <Grid
                 item
                 size={{ xs: 10 }}
                 sx={{ display: "flex", justifyContent: "flex-end" }}
               >
+                <Button
+                  variant="contained"
+                  sx={{ mt: 3, mr: 2 }}
+                  loading={isUpdating}
+                  loadingPosition="end"
+                  onClick={handleClean}
+                >
+                  Limpiar
+                </Button>
                 <Button
                   variant="contained"
                   sx={{ mt: 3 }}
