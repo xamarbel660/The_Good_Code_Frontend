@@ -10,13 +10,13 @@ function Footer() {
             sx={{
                 py: 3,
                 mt: 5,
-                bgcolor: 'grey.300'
+                bgcolor: 'grey'
             }}>
             <Container>
                 <Typography variant="h6" align="center">
                     The Good Code - Gestión de Donaciones
                 </Typography>
-                <Typography variant="body1" color="text.secondary" align="center">
+                <Typography variant="body1" color="textSecondary" align="center">
                     {'Copyright © '}
                     <Link color="inherit" underline="hover" href="https://github.com/xamarbel660/The_Good_Code_Frontend" sx={{fontWeight: 'bold'}}>
                         The Good Code

@@ -7,10 +7,10 @@ import { Link } from "react-router-dom";
 function Inicio() {
     return (
         <Grid container justifyContent="center" alignItems="center">
-            <Typography variant="h2" component="h1" gutterBottom>
+            <Typography variant="h1" component="h1" gutterBottom>
                 Bienvenido a The Good Code
             </Typography>
-            <Typography variant="h5" color="text.secondary">
+            <Typography variant="h4" color="textSecondary">
                 Gestión integral de campañas de donación de sangre.
             </Typography>
         </Grid>
