@@ -1,11 +1,14 @@
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditSquareIcon from '@mui/icons-material/EditSquare';
-import { Box, Card, CardActions, CardContent, CardMedia, Grid, Pagination, Tooltip } from '@mui/material';
+import PrintIcon from "@mui/icons-material/Print";
+import { Box, Card, CardActions, CardContent, CardMedia, Fab, Grid, Pagination, Tooltip } from '@mui/material';
 import Button from '@mui/material/Button';
 import Typography from "@mui/material/Typography";
 import { useEffect, useState } from "react";
+import styles from "../css/Impresion.module.css";
 import api from "../utils/api";
 import Dialogo from "./Dialogo.jsx";
+import Zoom from '@mui/material/Zoom';
 
 
 function ListadoDonacionesCard() {
@@ -194,7 +197,9 @@ function ListadoDonacionesCard() {
                 ))}
             </Grid>
 
-            <Box sx={{ display: 'flex', justifyContent: 'center', my: 4 }}>
+            {/* Paginación */}
+            {/* Estilo para que no se imprima la paginación (Metodo window.print()) */}
+            <Box sx={{ display: 'flex', justifyContent: 'center', my: 4 }} className={styles.noprint}>
                 <Pagination
                     count={totalPages} // Usamos el estado que viene del backend
                     page={page}
@@ -203,6 +208,28 @@ function ListadoDonacionesCard() {
                     size="large"
                 />
             </Box>
+
+            {/* Botón flotante para imprimir */}
+            <Tooltip title="Windows Print"
+                arrow
+                disableInteractive
+                slots={{
+                    transition: Zoom,
+                }}>
+                <Fab
+                    className={styles.noprint}
+                    color="secondary"
+                    aria-label="imprimir"
+                    onClick={() => window.print()}
+                    sx={{
+                        position: "fixed",
+                        top: 85,
+                        right: 20,
+                    }}
+                >
+                    <PrintIcon />
+                </Fab>
+            </Tooltip>
 
             {/* Dialogo para cuando se borra una donación */}
             <Dialogo

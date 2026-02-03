@@ -8,7 +8,10 @@ import { DataGrid } from '@mui/x-data-grid';
 import { useEffect, useState } from "react";
 import api from "../utils/api.js";
 import Dialogo from "./Dialogo.jsx";
-import { Grid } from '@mui/material';
+import { Fab, Grid } from '@mui/material';
+import generatePDF from "../utils/generatePDF";
+import PrintIcon from "@mui/icons-material/Print";
+import Zoom from '@mui/material/Zoom';
 
 function ListadoCampañas() {
   const [datos, setDatos] = useState([]);
@@ -135,6 +138,11 @@ function ListadoCampañas() {
       field: 'acciones',
       headerName: 'Acciones',
       headerAlign: "center",
+      // para que no se incluya en el PDF (metodo html2canvas y jspdf)
+      // asigna la clase a la celda del título (cabecera)
+      headerClassName: "omitir-pdf", 
+      // asigna la clase a todas las celdas de datos (filas)
+      cellClassName: "omitir-pdf",
       width: 225,
       sortable: false, //para que no se pueda ordenar la columna
       filterable: false, //para que no se pueda filtrar la columna
@@ -206,33 +214,54 @@ function ListadoCampañas() {
 
   return (
     <>
-    <Grid>
-      <Typography variant="h4" align="center" sx={{ my: 3 }}>Listado de Campañas</Typography>
+      {/* Contenedor con ID para capturar como PDF */}
+      <Grid id="pdf-content">
+        <Typography variant="h4" align="center" sx={{ my: 3 }}>Listado de Campañas</Typography>
 
-      <DataGrid
-        rows={datos}
-        columns={columns}
-        getRowId={(datos) => datos.id_campana} // Especificamos el campo que actua como ID unico
-        initialState={{
-          pagination: {
-            // Numero de datos por pagina
-            paginationModel: {
-              pageSize: 5,
+        <DataGrid
+          rows={datos}
+          columns={columns}
+          getRowId={(datos) => datos.id_campana} // Especificamos el campo que actua como ID unico
+          initialState={{
+            pagination: {
+              // Numero de datos por pagina
+              paginationModel: {
+                pageSize: 5,
+              },
             },
-          },
-        }}
-        pageSizeOptions={[5]}
-      />
+          }}
+          pageSizeOptions={[5]}
+        />
 
-      {/* Dialogo para cuando se borra una campaña */}
-      <Dialogo
-        open={openDialog}
-        onClose={() => handleDialogClose()}
-        dialogSeverity={dialogSeverity}
-        dialogMessage={dialogMessage}
-      />
-    </Grid>
+        {/* Dialogo para cuando se borra una campaña */}
+        <Dialogo
+          open={openDialog}
+          onClose={() => handleDialogClose()}
+          dialogSeverity={dialogSeverity}
+          dialogMessage={dialogMessage}
+        />
+      </Grid>
 
+      {/* Botón flotante para descargar PDF */}
+      <Tooltip title="html2canvas y jsPDF"
+        arrow
+        disableInteractive
+        slots={{
+          transition: Zoom,
+        }}>
+        <Fab
+          color="secondary"
+          aria-label="imprimir"
+          onClick={() => generatePDF("pdf-content", "campañas")}
+          sx={{
+            position: "fixed",
+            top: 85,
+            right: 20,
+          }}
+        >
+          <PrintIcon />
+        </Fab>
+      </Tooltip>
 
     </>
   );

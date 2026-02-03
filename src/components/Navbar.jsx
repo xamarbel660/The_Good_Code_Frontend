@@ -16,6 +16,7 @@ import Typography from "@mui/material/Typography";
 import * as React from "react";
 import { Link } from "react-router";
 import useThemeStore from '../stores/useThemeStore';
+import styles from "../css/Impresion.module.css";
 
 
 function Navbar() {
@@ -47,7 +48,8 @@ function Navbar() {
   const linkStyle = { color: "black", textDecoration: "none" };
 
   return (
-    <AppBar position="static" color="error">
+    // Estilo para que no se imprima la navbar (Metodo window.print())
+    <AppBar position="static" color="error" className={styles.noprint}>
       <Container maxWidth="xl">
         <Toolbar disableGutters>
           {/* Menú para resolución xs  */}

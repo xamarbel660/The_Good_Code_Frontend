@@ -2,6 +2,7 @@ import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import Link from '@mui/material/Link';
+import styles from "../css/Impresion.module.css";
 
 function Footer() {
     return (
@@ -11,7 +12,9 @@ function Footer() {
                 py: 3,
                 mt: 5,
                 bgcolor: 'grey'
-            }}>
+            }}
+            // Estilo para que no se imprima el footer (Metodo window.print())
+            className={styles.noprint}>
             <Container>
                 <Typography variant="h6" align="center">
                     The Good Code - Gestión de Donaciones
