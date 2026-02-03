@@ -52,6 +52,10 @@ npm install --save @progress/kendo-react-charts @progress/kendo-react-buttons
 
 [Enlace para instalar más componentes de Kendo UI](https://www.telerik.com/kendo-react-ui/components/getting-started/add-to-existing-project/)
 
+### Instalar librería Recharts
+
+npm install recharts
+
 ## Node.js
 
 ### Crear proyecto con Node.js

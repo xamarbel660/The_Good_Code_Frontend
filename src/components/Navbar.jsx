@@ -94,6 +94,13 @@ function Navbar() {
                 </Link>
               </MenuItem>
               <MenuItem onClick={handleCloseNavMenu}>
+                <Link to="/campañas/graph" style={linkStyle}>
+                  <Typography sx={{ textAlign: "center" }}>
+                    Gráfica de campañas
+                  </Typography>
+                </Link>
+              </MenuItem>
+              <MenuItem onClick={handleCloseNavMenu}>
                 <Link to="/campañas/parametrizado" style={linkStyle}>
                   <Typography sx={{ textAlign: "center" }}>
                     Listado de campañas parametrizado
@@ -188,6 +195,13 @@ function Navbar() {
                 <Link to="/campañas" style={linkStyle}>
                   <Typography sx={{ textAlign: "center" }}>
                     Listado de campañas
+                  </Typography>
+                </Link>
+              </MenuItem>
+              <MenuItem onClick={handleCloseNavMenu}>
+                <Link to="/campañas/graph" style={linkStyle}>
+                  <Typography sx={{ textAlign: "center" }}>
+                    Gráfica de campañas
                   </Typography>
                 </Link>
               </MenuItem>

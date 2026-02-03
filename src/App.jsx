@@ -15,6 +15,7 @@ import ModificacionDonacion from "./components/ModificacionDonacion";
 import ErrorPage from "./pages/ErrorPage";
 import Home from "./pages/Home";
 import useThemeStore from './stores/useThemeStore';
+import GraficaCampañas from './components/GraficaCampañas';
 
 
 const router = createBrowserRouter([
@@ -36,6 +37,10 @@ const router = createBrowserRouter([
       {
         path: "/campañas/new",
         element: <AltaCampaña />,
+      },
+      {
+        path: "/campañas/graph",
+        element: <GraficaCampañas />
       },
       {
         path: "/campañas/edit/:id",
