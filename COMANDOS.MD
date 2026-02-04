@@ -54,7 +54,27 @@ npm install --save @progress/kendo-react-charts @progress/kendo-react-buttons
 
 ### Instalar librería Recharts
 
+Libreria para crear gráficos en React
+
 npm install recharts
+
+### Instalar libreria jsPDF
+
+Libreria para crear PDFs en React
+
+npm install jspdf --save
+
+### Instalar libreria html2canvas
+
+Libreria para crear PDFs en React
+
+npm install --save html2canvas
+
+### Instalar libreria react-pdf
+
+Libreria para crear PDFs en React
+
+npm install @react-pdf/renderer --save
 
 ## Node.js
 

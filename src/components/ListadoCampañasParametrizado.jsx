@@ -16,6 +16,11 @@ import "dayjs/locale/es";
 import { useEffect, useState } from "react";
 import api from "../utils/api.js";
 import Dialogo from "./Dialogo.jsx";
+import ListadoCampañasParametrizadoPDF from "./ListadoCampañasParametrizadoPDF.jsx";
+import { Box, Fab } from "@mui/material";
+import { PDFDownloadLink } from "@react-pdf/renderer";
+import PrintIcon from "@mui/icons-material/Print";
+import Zoom from '@mui/material/Zoom';
 
 function ListadoCampañasParametrizadas() {
   const [campaña, setCampaña] = useState({
@@ -459,6 +464,43 @@ function ListadoCampañasParametrizadas() {
         dialogSeverity={dialogSeverity}
         dialogMessage={dialogMessage}
       />
+
+      {/* Botón de descarga */}
+      {datos && datos.length > 0 && (
+        <Tooltip title="React-PDF"
+          arrow
+          disableInteractive
+          slots={{
+            transition: Zoom,
+          }}>
+          <Fab
+            color="secondary"
+            aria-label="imprimir"
+            sx={{
+              position: "fixed",
+              top: 85,
+              right: 20,
+            }}
+          >
+            <PDFDownloadLink
+              document={
+                <ListadoCampañasParametrizadoPDF data={datos} />
+              }
+              fileName="campañas_filtradas.pdf"
+            >
+              {({ loading }) => (
+                <Box sx={{ display: "flex", alignItems: "center", justifyContent: "center", color: "white" }}>
+                  {loading ? (
+                    <Typography sx={{ fontSize: 12 }}>...</Typography>
+                  ) : (
+                    <PrintIcon />
+                  )}
+                </Box>
+              )}
+            </PDFDownloadLink>
+          </Fab>
+        </Tooltip>
+      )}
     </>
   );
 }
