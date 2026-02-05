@@ -1,16 +1,33 @@
+/**
+ * @fileoverview Store de Zustand para la gestión del tema visual (Light/Dark).
+ * Incluye persistencia en localStorage para recordar la preferencia del usuario.
+ */
 // stores/useThemeStore.js
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
+/**
+ * Crea el store de tema con persistencia.
+ * 
+ * @type {import('zustand').StoreApi}
+ */
 const useThemeStore = create(
     //persist nos permite guardar el estado en localStorage
     persist(
         (set) => ({
-            // Valor inicial
+            /**
+             * Modo actual del tema.
+             * @type {'light' | 'dark'}
+             * @default 'light'
+             */
             mode: 'light',
-            //Función para cambiar el modo
+
+            /**
+             * Alterna el modo del tema entre 'light' y 'dark'.
+             * Utiliza el estado previo para determinar el nuevo valor.
+             */
             setMode: () => set((state) => ({
-                //state es el estado actual y verifica si es light o dark para cambiarlo
+                // state es el estado actual y verifica si es light o dark para cambiarlo
                 mode: state.mode === 'light' ? 'dark' : 'light'
             })),
         }),

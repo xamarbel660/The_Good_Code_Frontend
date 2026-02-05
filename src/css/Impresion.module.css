@@ -1,8 +1,15 @@
+/*
+ * Estilos específicos para la impresión.
+ * Se aplican únicamente cuando se utiliza el diálogo de impresión del navegador (Ctrl+P) o al generar un PDF.
+ */
 @media print {
+
+  /* Oculta elementos que no deben aparecer en la hoja impresa (ej: menús de navegación, footers, botones) */
   .noprint {
     display: none !important;
   }
 
+  /* Muestra elementos que solo deben ser visibles en la impresión (ej: marcas de agua, encabezados de reporte) */
   .printonly {
     display: block;
   }

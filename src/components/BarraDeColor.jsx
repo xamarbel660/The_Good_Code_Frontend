@@ -1,7 +1,20 @@
+/**
+ * @fileoverview Componente personalizado para barras de gráficos Recharts.
+ * Asigna un color diferente a cada barra basado en su índice.
+ */
 import { Rectangle } from "recharts";
 
+/**
+ * Componente BarraDeColor.
+ * Renderiza un rectángulo con un color específico seleccionado de una paleta predefinida.
+ * Utilizado como 'shape' personalizado en componentes Bar de Recharts.
+ * 
+ * @param {Object} props - Propiedades pasadas por Recharts (x, y, width, height, index).
+ * @returns {JSX.Element} Rectángulo coloreado.
+ */
 function BarraDeColor(props) {
     const { x, y, width, height, index } = props;
+    // Array de colores hexadecimales para asignar a las barras
     const COLORS = [
         "#0088FE", "#00C49F", "#FFBB28", "#FF8042", "#A28BFE",
         "#FF4567", "#32CD32", "#8B008B", "#FF1493", "#00FFFF",

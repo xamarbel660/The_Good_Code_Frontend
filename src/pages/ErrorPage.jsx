@@ -1,8 +1,20 @@
+/**
+ * @fileoverview Página de error para rutas no encontradas o errores de carga.
+ * Muestra información sobre el error capturado por React Router.
+ */
 import { Link, useRouteError } from "react-router-dom";
 import Footer from "../components/Footer";
 import Navbar from "../components/Navbar";
 
 import { Grid } from "@mui/material";
+
+/**
+ * Componente que se renderiza cuando ocurre una excepción en el enrutamiento.
+ * Utiliza el hook useRouteError para obtener detalles del error.
+ * Mantiene la consistencia visual con el resto de la aplicación (Navbar/Footer).
+ * 
+ * @returns {JSX.Element} Página de error con mensaje y enlace de retorno.
+ */
 export default function ErrorPage() {
   const error = useRouteError();
   console.error(error);

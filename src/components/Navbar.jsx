@@ -1,3 +1,7 @@
+/**
+ * @fileoverview Barra de navegación principal de la aplicación.
+ * Gestiona la navegación entre páginas, el menú adaptativo (responsive) y el cambio de tema.
+ */
 import Brightness4Icon from '@mui/icons-material/Brightness4';
 import Brightness7Icon from '@mui/icons-material/Brightness7';
 import EmergencyIcon from '@mui/icons-material/Emergency';
@@ -19,12 +23,19 @@ import useThemeStore from '../stores/useThemeStore';
 import styles from "../css/Impresion.module.css";
 
 
+/**
+ * Componente Navbar.
+ * Renderiza la barra superior con el logo, enlaces de navegación y controles de usuario.
+ * Adaptable a diferentes tamaños de pantalla (xs: menú hamburguesa, md: menú horizontal).
+ * 
+ * @returns {JSX.Element} Barra de navegación completa.
+ */
 function Navbar() {
   const [anclaMenuCampanas, setAnclaMenuCampanas] = React.useState(null);
   const [anclaMenuDonaciones, setAnclaMenuDonaciones] = React.useState(null);
   const [anclaMenuXS, setAnclaMenuXS] = React.useState(null);
 
-  //Recuperamos el modo (dark / light) y la función para cambiarlo (setMode)
+  // Recuperamos el modo (dark / light) y la función para cambiarlo (setMode) del store global.
   const { mode, setMode } = useThemeStore();
 
   const handleClickMenuCampanas = (event) => {
@@ -48,7 +59,8 @@ function Navbar() {
   const linkStyle = { color: "black", textDecoration: "none" };
 
   return (
-    // Estilo para que no se imprima la navbar (Metodo window.print())
+    // Estilo para que no se imprima la navbar (Metodo window.print()).
+    // Se utiliza la clase 'styles.noprint' importada del módulo CSS.
     <AppBar position="static" color="error" className={styles.noprint}>
       <Container maxWidth="xl">
         <Toolbar disableGutters>

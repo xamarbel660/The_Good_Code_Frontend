@@ -1,3 +1,7 @@
+/**
+ * @fileoverview Componente para la creación de nuevas campañas de donación.
+ * Gestiona el formulario de alta, validaciones y comunicación con la API.
+ */
 import Button from "@mui/material/Button";
 import Grid from "@mui/material/Grid";
 import Paper from "@mui/material/Paper";
@@ -14,9 +18,17 @@ import { useNavigate } from "react-router-dom";
 import api from "../utils/api.js";
 import Dialogo from "./Dialogo.jsx";
 
+/**
+ * Componente AltaCampaña.
+ * Permite al usuario ingresar los datos necesarios para registrar una nueva campaña.
+ * Incluye validación de campos en cliente y manejo de errores de servidor.
+ * 
+ * @returns {JSX.Element} Formulario de alta de campaña.
+ */
 function AltaCampaña() {
     const navigate = useNavigate();
 
+    // Estado para los datos del formulario de la campaña
     const [campaña, setCampaña] = useState({
         nombre_campana: "",
         objetivo_litros_campana: 0.0,
@@ -25,6 +37,7 @@ function AltaCampaña() {
         urgente_campana: false,
     });
 
+    // Estado para controlar la validez visual de cada campo (true: válido, false: error)
     const [isCamposValidos, setIsCamposValidos] = useState({
         nombre_campana: true,
         objetivo_litros_campana: true,
@@ -33,11 +46,16 @@ function AltaCampaña() {
         urgente_campana: true,
     });
 
-    const [isUpdating, setIsUpdating] = useState(false);
-    const [openDialog, setOpenDialog] = useState(false);
-    const [dialogMessage, setDialogMessage] = useState("");
-    const [dialogSeverity, setDialogSeverity] = useState("success");
+    // Estados para control de UI: carga y diálogos
+    const [isUpdating, setIsUpdating] = useState(false); // Indica si se está procesando el envío
+    const [openDialog, setOpenDialog] = useState(false); // Visibilidad del modal
+    const [dialogMessage, setDialogMessage] = useState(""); // Contenido del mensaje del modal
+    const [dialogSeverity, setDialogSeverity] = useState("success"); // Tipo de mensaje (éxito/error)
 
+    /**
+     * Efecto que desencadena la petición a la API cuando isUpdating pasa a true.
+     * Envía los datos de la campaña al backend.
+     */
     useEffect(() => {
         async function fetchCreateCampaña() {
             try {
@@ -82,6 +100,12 @@ function AltaCampaña() {
         if (dialogSeverity === "success") navigate("/");
     }
 
+    /**
+     * Valida los datos del formulario antes de enviar.
+     * Verifica longitudes, rangos y campos obligatorios.
+     * 
+     * @returns {boolean} True si todos los datos son válidos, False en caso contrario.
+     */
     function validarDatos() {
         let valido = true;
         let objetoValidacion = {

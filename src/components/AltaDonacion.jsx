@@ -1,3 +1,8 @@
+/**
+ * @fileoverview Componente para el registro de nuevas donaciones.
+ * Gestiona el formulario de alta de donaciones, vinculándolas a campañas existentes.
+ * Incluye validación de datos del donante y fechas.
+ */
 import { FormControl, MenuItem, } from '@mui/material';
 import Button from "@mui/material/Button";
 import Grid from "@mui/material/Grid";
@@ -19,10 +24,18 @@ import Dialogo from "./Dialogo.jsx";
 
 
 
+/**
+ * Componente AltaDonaciones.
+ * Permite registrar una donación asociada a una campaña.
+ * Valida que la fecha de donación esté dentro del rango de la campaña seleccionada.
+ * 
+ * @returns {JSX.Element} Formulario de alta de donación.
+ */
 function AltaDonaciones() {
     const navigate = useNavigate();
 
     // Campaña seleccionada
+    // Estado para almacenar la campaña seleccionada actualmente (para validaciones de fecha)
     const [campaña, setCampaña] = useState({
         nombre_campana: "",
         objetivo_litros_campana: 0.00,
@@ -35,6 +48,7 @@ function AltaDonaciones() {
     const [campañas, setCampañas] = useState([]);
 
     // Donación
+    // Estado para los datos del formulario de donación
     const [donacion, setDonacion] = useState({
         id_campana: 0,
         nombre_donante: "",
@@ -48,6 +62,7 @@ function AltaDonaciones() {
     const tiposSanguineos = ["A+", "A-", "B+", "B-", "AB+", "AB-", "0+", "0-"];
 
     // Validación de los campos
+    // Estado para validación visual de campos erroneos
     const [isCamposValidos, setIsCamposValidos] = useState({
         id_campana: true,
         nombre_donante: true,
@@ -58,12 +73,16 @@ function AltaDonaciones() {
         URL_image: true,
     });
 
+    // Estados de UI
     const [isUpdating, setIsUpdating] = useState(false);
     const [openDialog, setOpenDialog] = useState(false);
     const [dialogMessage, setDialogMessage] = useState("");
     const [dialogSeverity, setDialogSeverity] = useState("success");
 
-    // Crear donación
+    /**
+     * Efecto para crear la donación.
+     * Se ejecuta cuando isUpdating es true.
+     */
     useEffect(() => {
         async function fetchCreateDonacion() {
             try {
@@ -84,7 +103,10 @@ function AltaDonaciones() {
         if (isUpdating) fetchCreateDonacion();
     }, [isUpdating]);
 
-    // Recuperar campañas
+    /**
+     * Efecto de carga inicial.
+     * Recupera el listado de campañas disponibles para el selector.
+     */
     useEffect(() => {
         async function fetchRecuperarCampañas() {
             try {
@@ -100,6 +122,10 @@ function AltaDonaciones() {
         fetchRecuperarCampañas();
     }, []);
 
+    /**
+     * Maneja los cambios en los inputs del formulario.
+     * Si cambia la campaña, actualiza también el estado 'campaña' para ajustar las restricciones de fechas.
+     */
     function handleChange(e) {
         if (e.target.name == "es_primera_vez") {
             setDonacion({ ...donacion, [e.target.name]: e.target.checked });
@@ -125,6 +151,12 @@ function AltaDonaciones() {
         if (dialogSeverity === "success") navigate("/");
     }
 
+    /**
+     * Valida los datos del formulario.
+     * Verifica campos obligatorios, formatos y rangos.
+     * 
+     * @returns {boolean} True si es válido.
+     */
     function validarDatos() {
         let valido = true;
         let objetoValidacion = {

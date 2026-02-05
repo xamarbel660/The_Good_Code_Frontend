@@ -1,3 +1,7 @@
+/**
+ * @fileoverview Documento PDF para el listado de campañas.
+ * Define la estructura y estilos del reporte generado con @react-pdf/renderer.
+ */
 import {
   Document,
   Page,
@@ -7,6 +11,10 @@ import {
   Image,
 } from "@react-pdf/renderer";
 
+/**
+ * Estilos para el documento PDF.
+ * Define el layout de página, tablas y tipografía.
+ */
 const styles = StyleSheet.create({
   // Estilos de página: padding interno y tamaño de fuente base
   page: {
@@ -61,6 +69,14 @@ const styles = StyleSheet.create({
 });
 
 
+/**
+ * Componente que representa el documento PDF a generar.
+ * Recibe los datos de campañas y los renderiza en una tabla formateada.
+ * 
+ * @param {Object} props - Propiedades del componente.
+ * @param {Array} props.data - Array de objetos de campaña a mostrar en el reporte.
+ * @returns {JSX.Element} Documento PDF.
+ */
 function ListadoCampañasParametrizadoPDF({ data }) {
   return (
     // Documento PDF con página tamaño A4

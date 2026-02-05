@@ -1,3 +1,7 @@
+/**
+ * @fileoverview Componente que muestra el listado completo de donaciones.
+ * Presenta una tabla con la información principal de cada donación y opciones de gestión.
+ */
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditSquareIcon from '@mui/icons-material/EditSquare';
 import Button from '@mui/material/Button';
@@ -9,6 +13,13 @@ import { useEffect, useState } from "react";
 import api from "../utils/api.js";
 import Dialogo from "./Dialogo.jsx";
 
+/**
+ * Componente ListadoDonaciones.
+ * Visualiza todas las donaciones en un DataGrid.
+ * Muestra información como campaña asociada, donante, peso y fecha.
+ * 
+ * @returns {JSX.Element} Vista de tabla de donaciones.
+ */
 function ListadoDonaciones() {
   const [datos, setDatos] = useState([]);
   const [error, setError] = useState(null);
@@ -18,7 +29,10 @@ function ListadoDonaciones() {
   const [dialogMessage, setDialogMessage] = useState("");
   const [dialogSeverity, setDialogSeverity] = useState("success");
 
-  //Recuperación de todas las donaciones
+  /**
+   * Efecto de carga inicial.
+   * Recupera todas las donaciones del servidor.
+   */
   useEffect(() => {
     async function fetchDonaciones() {
       try {
@@ -37,7 +51,11 @@ function ListadoDonaciones() {
     fetchDonaciones();
   }, []);
 
-  //Borrado de una donación
+  /**
+   * Elimina una donación específica.
+   * 
+   * @param {number} id_donacion - ID de la donación a eliminar.
+   */
   async function handleDelete(id_donacion) {
     try {
       await api.delete("/donaciones/" + id_donacion);
@@ -78,7 +96,10 @@ function ListadoDonaciones() {
     );
   }
 
-  // Columnas de la tabla
+  /**
+   * Definición de columnas para el DataGrid.
+   * Incluye getters de valor para datos anidados (campaña) y renderizado condicional.
+   */
   const columns = [
     { field: 'id_donacion', headerName: 'ID', width: 70 },
     {

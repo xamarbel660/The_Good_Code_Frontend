@@ -1,3 +1,7 @@
+/**
+ * @fileoverview Componente raíz y configuración de enrutamiento principal.
+ * Define la estructura de navegación y la gestión del tema visual.
+ */
 import CssBaseline from '@mui/material/CssBaseline';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import { createBrowserRouter } from "react-router";
@@ -18,6 +22,17 @@ import useThemeStore from './stores/useThemeStore';
 import GraficaCampañas from './components/GraficaCampañas';
 
 
+/**
+ * Configuración del enrutador principal de la aplicación.
+ * Define las rutas y sus componentes correspondientes.
+ * Utiliza createBrowserRouter para habilitar las funcionalidades de datos de React Router v6.4+.
+ * 
+ * Estructura de rutas:
+ * - /: Home (layout principal)
+ *   - /: Inicio (página de bienvenida)
+ *   - /campañas/*: Rutas relacionadas con campañas
+ *   - /donaciones/*: Rutas relacionadas con donaciones
+ */
 const router = createBrowserRouter([
   {
     path: "/",
@@ -70,10 +85,17 @@ const router = createBrowserRouter([
   },
 ]);
 
+/**
+ * Componente principal de la aplicación.
+ * Gestiona el tema global y provee el contexto de enrutamiento.
+ * 
+ * @returns {JSX.Element} La aplicación completa envuelta en proveedores de contexto.
+ */
 function App() {
-  //Recuperamos el modo (dark / light) del localStorage
+  // Recuperamos el modo (dark / light) del store global de Zustand
+  // Esto permite persistencia del tema entre recargas
   const mode = useThemeStore((state) => state.mode);
-  //Creamos el tema
+  // Creamos el tema de Material UI dinámicamente basado en el modo actual
   const theme = createTheme({
     palette: {
       mode: mode,

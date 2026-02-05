@@ -1,3 +1,7 @@
+/**
+ * @fileoverview Componente visual para listar donaciones en formato de tarjetas.
+ * Incluye paginación desde el servidor y botón flotante de impresión.
+ */
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditSquareIcon from '@mui/icons-material/EditSquare';
 import PrintIcon from "@mui/icons-material/Print";
@@ -11,6 +15,14 @@ import Dialogo from "./Dialogo.jsx";
 import Zoom from '@mui/material/Zoom';
 
 
+/**
+ * Componente ListadoDonacionesCard.
+ * Muestra las donaciones paginadas en un grid responsivo de tarjetas.
+ * Utiliza paginación en servidor (/donaciones/cards/{page}).
+ * Integrado con estilos de impresión para ocultar elementos de navegación.
+ * 
+ * @returns {JSX.Element} Grid de tarjetas de donaciones.
+ */
 function ListadoDonacionesCard() {
     const [datos, setDatos] = useState([]);
     const [error, setError] = useState(null);
@@ -22,6 +34,10 @@ function ListadoDonacionesCard() {
     const [dialogMessage, setDialogMessage] = useState("");
     const [dialogSeverity, setDialogSeverity] = useState("success");
 
+    /**
+     * Efecto para paginación.
+     * Recupera las donaciones de la página actual cada vez que 'page' cambia.
+     */
     useEffect(() => {
         async function fetchDonaciones() {
             try {
@@ -46,7 +62,11 @@ function ListadoDonacionesCard() {
         setPage(value);
     };
 
-    //Borrado de una donación
+    /**
+     * Elimina una donación y actualiza la lista localmente.
+     * 
+     * @param {number} id_donacion - ID de la donación a borrar.
+     */
     async function handleDelete(id_donacion) {
         try {
             await api.delete("/donaciones/" + id_donacion);

@@ -1,3 +1,7 @@
+/**
+ * @fileoverview Componente para la búsqueda avanzada de donaciones.
+ * Permite filtrar por campaña, datos del donante, rango de pesos, fechas y grupo sanguíneo.
+ */
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditSquareIcon from "@mui/icons-material/EditSquare";
 import { FormControl, MenuItem } from "@mui/material";
@@ -20,6 +24,13 @@ import { useEffect, useState } from "react";
 import api from "../utils/api.js";
 import Dialogo from "./Dialogo.jsx";
 
+/**
+ * Componente ListadoDonacionesParametrizado.
+ * Ofrece un formulario de filtros multicriterio para consultar donaciones.
+ * Muestra los resultados en un DataGrid y permite gestionar las donaciones encontradas.
+ * 
+ * @returns {JSX.Element} Interfaz de búsqueda y listado de donaciones.
+ */
 function ListadoDonacionesParametrizado() {
   // Campaña seleccionada
   /* const [campaña, setCampaña] = useState({
@@ -33,7 +44,8 @@ function ListadoDonacionesParametrizado() {
   // Campañas del select
   const [campañas, setCampañas] = useState([]);
 
-  // Donación
+  // Donación (Estado del filtro)
+  // Almacena los criterios de búsqueda introducidos por el usuario
   const [donacion, setDonacion] = useState({
     id_campana: 0,
     nombre_donante: "",
@@ -61,7 +73,11 @@ function ListadoDonacionesParametrizado() {
   const [dialogMessage, setDialogMessage] = useState("");
   const [dialogSeverity, setDialogSeverity] = useState("success");
 
-  // Recuperar donaciones con filtro
+  /**
+   * Efecto para recuperar donaciones filtradas.
+   * Construye la query string con los parámetros no vacíos.
+   * Se ejecuta cuando isUpdating es true (al pulsar Buscar).
+   */
   useEffect(() => {
     async function fetchRecuperarDonaciones() {
       try {
@@ -79,7 +95,10 @@ function ListadoDonacionesParametrizado() {
     if (isUpdating) fetchRecuperarDonaciones();
   }, [isUpdating]);
 
-  // Recuperar campañas
+  /**
+   * Efecto de carga inicial de campañas.
+   * Necesario para poblar el selector de campañas en el filtro.
+   */
   useEffect(() => {
     async function fetchRecuperarCampañas() {
       try {
@@ -106,12 +125,19 @@ function ListadoDonacionesParametrizado() {
     }
   }
 
+  /**
+   * Manejador del botón Buscar (Aceptar).
+   * Activa el flag isUpdating para disparar el efecto de búsqueda.
+   */
   function handleClick() {
     // evitar envíos duplicados por pulsar el botón tras el mensaje de inserción correcta
     if (isUpdating) return;
     setIsUpdating(true);
   }
 
+  /**
+   * Resetea los filtros de búsqueda a sus valores por defecto.
+   */
   function handleClean() {
     setDonacion({
       id_campana: 0,

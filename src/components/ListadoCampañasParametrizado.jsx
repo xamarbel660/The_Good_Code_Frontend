@@ -1,3 +1,7 @@
+/**
+ * @fileoverview Componente para la búsqueda y listado avanzado de campañas.
+ * Permite filtrar por nombre, objetivos y fechas, además de generar reportes PDF detallados.
+ */
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditSquareIcon from "@mui/icons-material/EditSquare";
 import Button from "@mui/material/Button";
@@ -22,6 +26,13 @@ import { PDFDownloadLink } from "@react-pdf/renderer";
 import PrintIcon from "@mui/icons-material/Print";
 import Zoom from '@mui/material/Zoom';
 
+/**
+ * Componente ListadoCampañasParametrizadas.
+ * Ofrece un formulario de filtros en la parte superior y una tabla de resultados en la inferior.
+ * Integra la librería @react-pdf/renderer para generar un documento PDF con los datos filtrados en cliente.
+ * 
+ * @returns {JSX.Element} Vista de búsqueda y resultados.
+ */
 function ListadoCampañasParametrizadas() {
   const [campaña, setCampaña] = useState({
     nombre_campana: "",
@@ -40,6 +51,11 @@ function ListadoCampañasParametrizadas() {
   const [dialogMessage, setDialogMessage] = useState("");
   const [dialogSeverity, setDialogSeverity] = useState("success");
 
+  /**
+   * Efecto para recuperar campañas filtradas desde la API.
+   * Se ejecuta cuando isUpdating cambia a true (al pulsar Buscar).
+   * Construye la query string basada en el estado 'campaña'.
+   */
   useEffect(() => {
     async function fetchRecuperarCampañas() {
       try {
@@ -63,12 +79,19 @@ function ListadoCampañasParametrizadas() {
     setCampaña({ ...campaña, [e.target.name]: e.target.value });
   }
 
+  /**
+   * Manejador del botón Buscar.
+   * Activa el flag isUpdating para disparar el useEffect de búsqueda.
+   */
   function handleClick() {
     // evitar envíos duplicados por pulsar el botón tras el mensaje de inserción correcta
     if (isUpdating) return;
     setIsUpdating(true);
   }
 
+  /**
+   * Limpia los filtros de búsqueda restableciendo el estado 'campaña'.
+   */
   function handleClean() {
     setCampaña({
       id_campana: 0,

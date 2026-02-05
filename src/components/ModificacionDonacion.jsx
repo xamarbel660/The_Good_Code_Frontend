@@ -1,3 +1,8 @@
+/**
+ * @fileoverview Componente para la edición de donaciones existentes.
+ * Permite modificar los datos de una donación, incluyendo asignación a una nueva campaña.
+ * Gestiona la carga de datos y validaciones de actualización.
+ */
 import { FormControl, MenuItem, } from '@mui/material';
 import Button from "@mui/material/Button";
 import Grid from "@mui/material/Grid";
@@ -19,11 +24,19 @@ import api from "../utils/api.js";
 import Dialogo from "./Dialogo.jsx";
 
 
+/**
+ * Componente ModificacionDonacion.
+ * Recupera una donación por ID, llena el formulario y permite su edición.
+ * Mantiene la integridad referencial con las campañas y valida las fechas.
+ * 
+ * @returns {JSX.Element} Formulario de edición de donación.
+ */
 function ModificacionDonacion() {
     const { id } = useParams();
     const navigate = useNavigate();
     const tiposSanguineos = ["A+", "A-", "B+", "B-", "AB+", "AB-", "0+", "0-"];
 
+    // Estados de UI
     const [isUpdating, setIsUpdating] = useState(false);
     const [openDialog, setOpenDialog] = useState(false);
     const [dialogMessage, setDialogMessage] = useState("");
@@ -43,6 +56,7 @@ function ModificacionDonacion() {
     const [campañas, setCampañas] = useState([]);
 
     //De esta forma evitamos que los limites de la fecha de donación sean las correctas
+    // Campaña actual vinculada a la donación (para validar fechas)
     const campaña = campañas.find(c => c.id_campana == donacion.id_campana) || {
         nombre_campana: "",
         objetivo_litros_campana: 0.00,
@@ -51,6 +65,7 @@ function ModificacionDonacion() {
         urgente_campana: false,
     };
 
+    // Estado para validación visual de campos erroneos
     const [isCamposValidos, setIsCamposValidos] = useState({
         id_campana: true,
         nombre_donante: true,
@@ -61,7 +76,10 @@ function ModificacionDonacion() {
         URL_image: true,
     });
 
-    //fetchRecuperarCampañas
+    /**
+     * Efecto para recuperar campañas.
+     * Carga la lista inicial de campañas para el select.
+     */
     useEffect(() => {
         async function fetchRecuperarCampañas() {
             try {
@@ -78,7 +96,10 @@ function ModificacionDonacion() {
         fetchRecuperarCampañas();
     }, []);
 
-    //fetchRecuperarDonacion
+    /**
+     * Efecto para recuperar la donación.
+     * Utiliza el ID de la URL para cargar los datos a editar.
+     */
     useEffect(() => {
         async function fetchRecuperarDonacion() {
             try {
@@ -95,7 +116,10 @@ function ModificacionDonacion() {
 
     }, []);
 
-    //fetchUpdateDonacion
+    /**
+     * Efecto de actualización.
+     * Envía los datos modificados (PUT) al servidor cuando isUpdating es true.
+     */
     useEffect(() => {
         async function fetchUpdateDonacion() {
             try {

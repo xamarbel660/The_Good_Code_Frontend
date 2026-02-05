@@ -1,9 +1,13 @@
 import axios from 'axios';
 
 /**
- * Instancia configurada de Axios para comunicación con el backend
- * Base URL: http://localhost:3000/api
- * Content-Type: application/json
+ * Instancia configurada de Axios para comunicación con el backend.
+ * 
+ * @constant
+ * @type {import('axios').AxiosInstance}
+ * @property {string} baseURL - URL base para todas las peticiones (http://localhost:3000/api)
+ * @property {number} timeout - Tiempo máximo de espera por petición (5000ms)
+ * @property {object} headers - Cabeceras por defecto (Content-Type: application/json)
  */
 const api = axios.create({
   baseURL: 'http://localhost:3000/api',
@@ -15,7 +19,10 @@ const api = axios.create({
 });
 
 /**
- * Interceptor de respuesta para manejo centralizado de errores
+ * Interceptor de respuesta para manejo centralizado de errores.
+ * 
+ * Transforma la respuesta exitosa devolviendo solo los datos (response.data).
+ * Captura rechazos y formatea el objeto de error para que sea consistente en toda la app.
  */
 api.interceptors.response.use(
   (response) => {

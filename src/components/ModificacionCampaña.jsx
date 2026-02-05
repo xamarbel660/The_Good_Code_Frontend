@@ -1,3 +1,7 @@
+/**
+ * @fileoverview Componente para la edición de campañas existentes.
+ * Recupera los datos de una campaña específica y permite modificarlos con validación.
+ */
 import Button from "@mui/material/Button";
 import Grid from "@mui/material/Grid";
 import Paper from "@mui/material/Paper";
@@ -16,6 +20,13 @@ import api from "../utils/api.js";
 import Dialogo from "./Dialogo.jsx";
 
 
+/**
+ * Componente ModificacionCampaña.
+ * Carga los datos de una campaña basada en el ID de la URL y permite su edición.
+ * Reutiliza lógica de validación similar a la de alta.
+ * 
+ * @returns {JSX.Element} Formulario de edición de campaña.
+ */
 function ModificacionCampaña() {
     //Obtenemos el id de la campaña
     const { id } = useParams();
@@ -39,11 +50,16 @@ function ModificacionCampaña() {
         urgente_campana: true,
     });
 
+    // Estados de UI
     const [isUpdating, setIsUpdating] = useState(false);
     const [openDialog, setOpenDialog] = useState(false);
     const [dialogMessage, setDialogMessage] = useState("");
     const [dialogSeverity, setDialogSeverity] = useState("success");
 
+    /**
+     * Efecto de carga inicial.
+     * Recupera los datos de la campaña por ID al montar el componente.
+     */
     useEffect(() => {
         async function fetchRecuperarCampaña() {
             try {
@@ -61,6 +77,10 @@ function ModificacionCampaña() {
 
     }, []);
 
+    /**
+     * Efecto de actualización.
+     * Envía los datos modificados (PUT) cuando isUpdating es true.
+     */
     useEffect(() => {
         async function fetchUpdateCampaña() {
             try {

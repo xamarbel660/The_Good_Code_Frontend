@@ -1,3 +1,7 @@
+/**
+ * @fileoverview Componente para visualizar el listado completo de campañas.
+ * Permite visualizar, borrar y acceder a la edición de campañas, además de generar un PDF básico.
+ */
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditSquareIcon from '@mui/icons-material/EditSquare';
 import Button from '@mui/material/Button';
@@ -13,6 +17,13 @@ import generatePDF from "../utils/generatePDF";
 import PrintIcon from "@mui/icons-material/Print";
 import Zoom from '@mui/material/Zoom';
 
+/**
+ * Componente ListadoCampañas.
+ * Muestra una tabla (DataGrid) con todas las campañas recuperadas del servidor.
+ * Ofrece funcionalidades de borrado y enlace para edición.
+ * 
+ * @returns {JSX.Element} Vista de tabla de campañas.
+ */
 function ListadoCampañas() {
   const [datos, setDatos] = useState([]);
   const [error, setError] = useState(null);
@@ -22,7 +33,9 @@ function ListadoCampañas() {
   const [dialogMessage, setDialogMessage] = useState("");
   const [dialogSeverity, setDialogSeverity] = useState("success");
 
-  //Recuperación de todas las campañas
+  /**
+   * Recuperación de todas las campañas al montar el componente.
+   */
   useEffect(() => {
     async function fetchCampañas() {
       try {
@@ -41,7 +54,12 @@ function ListadoCampañas() {
     fetchCampañas();
   }, []);
 
-  //Borrado de una campaña
+  /**
+   * Maneja el borrado de una campaña.
+   * Solicita confirmación (no visual, directo a API en este codigo) y actualiza el estado local.
+   * 
+   * @param {number} id_campana - Identificador de la campaña a eliminar.
+   */
   async function handleDelete(id_campana) {
     try {
       await api.delete("/campanas/" + id_campana);
@@ -140,7 +158,7 @@ function ListadoCampañas() {
       headerAlign: "center",
       // para que no se incluya en el PDF (metodo html2canvas y jspdf)
       // asigna la clase a la celda del título (cabecera)
-      headerClassName: "omitir-pdf", 
+      headerClassName: "omitir-pdf",
       // asigna la clase a todas las celdas de datos (filas)
       cellClassName: "omitir-pdf",
       width: 225,

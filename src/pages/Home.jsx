@@ -1,8 +1,20 @@
+/**
+ * @fileoverview Componente de layout principal (Home).
+ * Estructura la página con Navbar, contenido dinámico (Outlet) y Footer.
+ * Utiliza Grid de Material UI para un diseño flexible y responsivo.
+ */
 import { Outlet } from "react-router";
 import Footer from "../components/Footer";
 import Navbar from "../components/Navbar";
 import { Grid } from "@mui/material";
 
+/**
+ * Componente funcional Home.
+ * Actúa como contenedor principal para las rutas anidadas.
+ * Asegura que el footer se mantenga al final de la página (sticky footer) mediante flexbox.
+ * 
+ * @returns {JSX.Element} Estructura base de la aplicación.
+ */
 function Home() {
   return (
     <>

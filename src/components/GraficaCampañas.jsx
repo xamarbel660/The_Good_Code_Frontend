@@ -1,9 +1,20 @@
+/**
+ * @fileoverview Componente que renderiza un gráfico de barras con el número de donaciones por campaña.
+ * Utiliza la librería Recharts para la visualización de datos.
+ */
 import { Box, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
 import { Bar, BarChart, CartesianGrid, ResponsiveContainer, Text, Tooltip, XAxis, YAxis } from 'recharts';
 import api from "../utils/api.js";
 import BarraDeColor from "./BarraDeColor.jsx";
 
+/**
+ * Componente GraficaCampañas.
+ * Obtiene datos estadísticos del servidor y los visualiza en un gráfico de barras.
+ * Personaliza el eje X para mejorar la legibilidad de etiquetas largas.
+ * 
+ * @returns {JSX.Element} Contenedor con el gráfico de campañas.
+ */
 function GraficaCampañas() {
     // Estado para almacenar los datos del gráfico
     const [datos, setDatos] = useState([]);
@@ -11,6 +22,10 @@ function GraficaCampañas() {
     // Estado para manejar errores
     const [error, setError] = useState(null);
 
+    /**
+     * Efecto de carga.
+     * Recupera los datos para el gráfico (/campanas/graph).
+     */
     useEffect(() => {
         async function fetchCampañas() {
             try {
@@ -67,6 +82,7 @@ function GraficaCampañas() {
                             dataKey="id_campana_campaña.nombre_campana"
                             tick={false}
                         /> */}
+                        {/* Configuración del Eje X para etiquetas rotadas y legibles */}
                         <XAxis
                             dataKey="id_campana_campaña.nombre_campana"
                             interval={0}           // Muestra todas las etiquetas
@@ -82,6 +98,7 @@ function GraficaCampañas() {
                         <YAxis />
                         <Tooltip />
 
+                        {/* Barra con forma personalizada para colores dinámicos */}
                         <Bar
                             dataKey="total"
                             // Shape permite usar un componente personalizado para dibujar la barra, cell esta deprecated
