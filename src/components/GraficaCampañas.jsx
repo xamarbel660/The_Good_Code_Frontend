@@ -1,6 +1,7 @@
 /**
  * @fileoverview Componente que renderiza un gráfico de barras con el número de donaciones por campaña.
  * Utiliza la librería Recharts para la visualización de datos.
+ * Incluye funcionalidad para exportar el gráfico a PDF mediante html2canvas y jsPDF.
  */
 import PrintIcon from "@mui/icons-material/Print";
 import { Box, Fab, Tooltip, Typography } from "@mui/material";
@@ -15,8 +16,9 @@ import BarraDeColor from "./BarraDeColor.jsx";
  * Componente GraficaCampañas.
  * Obtiene datos estadísticos del servidor y los visualiza en un gráfico de barras.
  * Personaliza el eje X para mejorar la legibilidad de etiquetas largas.
+ * Incluye un botón flotante para descargar el gráfico como documento PDF.
  * 
- * @returns {JSX.Element} Contenedor con el gráfico de campañas.
+ * @returns {JSX.Element} Contenedor con el gráfico de campañas y botón de descarga.
  */
 function GraficaCampañas() {
     // Estado para almacenar los datos del gráfico
@@ -99,8 +101,9 @@ function GraficaCampañas() {
                             }}
                         />
                         <YAxis />
-                        {/* Nombre diferente porque si no se lia con el otro tooltip */}
+                        {/* Tooltip de Recharts (renombrado para evitar conflictos con MUI) */}
                         <RechartsTooltip />
+                        {/* Leyenda del gráfico */}
                         <Legend verticalAlign="top" height={50} />
 
                         {/* Barra con forma personalizada para colores dinámicos */}
@@ -113,7 +116,8 @@ function GraficaCampañas() {
                         />
                     </BarChart>
                 </ResponsiveContainer>
-                {/* Botón flotante para descargar PDF */}
+                {/* Botón flotante para descargar el gráfico en PDF */}
+                {/* Se excluye de la generación del PDF mediante la clase 'omitir-pdf' */}
                 <Tooltip title="html2canvas y jsPDF"
                     arrow
                     disableInteractive
