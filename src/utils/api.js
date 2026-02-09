@@ -10,8 +10,8 @@ import axios from 'axios';
  * @property {object} headers - Cabeceras por defecto (Content-Type: application/json)
  */
 const api = axios.create({
-  baseURL: 'http://localhost:3000/api',
-  // baseURL: window.__APP_CONFIG__,
+  // baseURL: 'http://localhost:3000/api',
+  baseURL: 'http://44.219.137.83:3000/api',
   timeout: 5000,
   headers: {
     'Content-Type': 'application/json',
