@@ -2,10 +2,13 @@
  * @fileoverview Componente que renderiza un gráfico de barras con el número de donaciones por campaña.
  * Utiliza la librería Recharts para la visualización de datos.
  */
-import { Box, Typography } from "@mui/material";
+import PrintIcon from "@mui/icons-material/Print";
+import { Box, Fab, Tooltip, Typography } from "@mui/material";
+import Zoom from '@mui/material/Zoom';
 import { useEffect, useState } from "react";
-import { Bar, BarChart, CartesianGrid, ResponsiveContainer, Text, Tooltip, XAxis, YAxis } from 'recharts';
+import { Bar, BarChart, CartesianGrid, Legend, ResponsiveContainer, Tooltip as RechartsTooltip, XAxis, YAxis } from 'recharts';
 import api from "../utils/api.js";
+import generatePDF from "../utils/generatePDF";
 import BarraDeColor from "./BarraDeColor.jsx";
 
 /**
@@ -69,7 +72,7 @@ function GraficaCampañas() {
 
     return (
         <>
-            <Box sx={{ width: '100%', height: 500, mt: 3 }}>
+            <Box id="pdf-content" sx={{ width: '100%', height: 500, mt: 3, position: "relative" }}>
                 <Typography variant="h5" align="center" gutterBottom>
                     Número de Donaciones por Campaña
                 </Typography>
@@ -77,7 +80,7 @@ function GraficaCampañas() {
                 {/* ResponsiveContainer permite que el gráfico se adapte al tamaño del contenedor */}
                 <ResponsiveContainer width="100%" height="100%">
                     <BarChart data={datos}>
-                        <CartesianGrid strokeDasharray="6 6" />
+                        <CartesianGrid strokeDasharray="6 6" vertical={false} />
                         {/* <XAxis
                             dataKey="id_campana_campaña.nombre_campana"
                             tick={false}
@@ -96,17 +99,41 @@ function GraficaCampañas() {
                             }}
                         />
                         <YAxis />
-                        <Tooltip />
+                        {/* Nombre diferente porque si no se lia con el otro tooltip */}
+                        <RechartsTooltip />
+                        <Legend verticalAlign="top" height={50} />
 
                         {/* Barra con forma personalizada para colores dinámicos */}
                         <Bar
                             dataKey="total"
+                            name="Donaciones"
                             // Shape permite usar un componente personalizado para dibujar la barra, cell esta deprecated
                             shape={<BarraDeColor />}
                             isAnimationActive={true}
                         />
                     </BarChart>
                 </ResponsiveContainer>
+                {/* Botón flotante para descargar PDF */}
+                <Tooltip title="html2canvas y jsPDF"
+                    arrow
+                    disableInteractive
+                    slots={{
+                        transition: Zoom,
+                    }}>
+                    <Fab
+                        color="secondary"
+                        aria-label="imprimir"
+                        onClick={() => generatePDF("pdf-content", "Grafica_campañas")}
+                        sx={{
+                            position: "fixed",
+                            top: 85,
+                            right: 20,
+                            className: "omitir-pdf",
+                        }}
+                    >
+                        <PrintIcon />
+                    </Fab>
+                </Tooltip>
             </Box>
         </>
     );
