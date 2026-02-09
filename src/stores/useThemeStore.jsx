@@ -9,7 +9,7 @@ import { persist } from 'zustand/middleware';
 /**
  * Crea el store de tema con persistencia.
  * 
- * @type {import('zustand').StoreApi}
+ * @type {Object}
  */
 const useThemeStore = create(
     //persist nos permite guardar el estado en localStorage

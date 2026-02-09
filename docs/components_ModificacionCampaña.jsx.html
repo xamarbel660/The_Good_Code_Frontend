@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: components/ModificacionCampaña.jsx</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: components/ModificacionCampaña.jsx</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
+ * @fileoverview Componente para la edición de campañas existentes.
+ * Recupera los datos de una campaña específica y permite modificarlos con validación.
+ */
+import Button from "@mui/material/Button";
+import Grid from "@mui/material/Grid";
+import Paper from "@mui/material/Paper";
+import Switch from '@mui/material/Switch';
+import TextField from "@mui/material/TextField";
+import Typography from "@mui/material/Typography";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import dayjs from "dayjs";
+import "dayjs/locale/es";
+import { useEffect, useState } from "react";
+import { useParams } from "react-router";
+import { useNavigate } from "react-router-dom";
+import api from "../utils/api.js";
+import Dialogo from "./Dialogo.jsx";
+
+
+/**
+ * Componente ModificacionCampaña.
+ * Carga los datos de una campaña basada en el ID de la URL y permite su edición.
+ * Reutiliza lógica de validación similar a la de alta.
+ * 
+ * @returns {JSX.Element} Formulario de edición de campaña.
+ */
+function ModificacionCampaña() {
+    //Obtenemos el id de la campaña
+    const { id } = useParams();
+
+    const navigate = useNavigate();
+
+    const [campaña, setCampaña] = useState({
+        id_campana: 0,
+        nombre_campana: "",
+        objetivo_litros_campana: 0.00,
+        fecha_inicio_campana: "",
+        fecha_fin_campana: "",
+        urgente_campana: false,
+    });
+
+    const [isCamposValidos, setIsCamposValidos] = useState({
+        nombre_campana: true,
+        objetivo_litros_campana: true,
+        fecha_inicio_campana: true,
+        fecha_fin_campana: true,
+        urgente_campana: true,
+    });
+
+    // Estados de UI
+    const [isUpdating, setIsUpdating] = useState(false);
+    const [openDialog, setOpenDialog] = useState(false);
+    const [dialogMessage, setDialogMessage] = useState("");
+    const [dialogSeverity, setDialogSeverity] = useState("success");
+
+    /**
+     * Efecto de carga inicial.
+     * Recupera los datos de la campaña por ID al montar el componente.
+     */
+    useEffect(() => {
+        async function fetchRecuperarCampaña() {
+            try {
+                const respuesta = await api.get(`/campanas/${id}`);
+                setCampaña(respuesta.datos);
+
+            } catch (error) {
+                setDialogMessage(error.mensaje || "Error al buscar la campaña");
+                setDialogSeverity("error"); // Color rojo
+                setOpenDialog(true); // Abrir el diálogo
+            }
+            // Pase lo que pase hemos terminado el proceso de actualización
+        }
+        fetchRecuperarCampaña();
+
+    }, []);
+
+    /**
+     * Efecto de actualización.
+     * Envía los datos modificados (PUT) cuando isUpdating es true.
+     */
+    useEffect(() => {
+        async function fetchUpdateCampaña() {
+            try {
+                await api.put(`/campanas/${id}`, campaña);
+
+                setDialogMessage("Campaña actualizada correctamente"); // Mensaje
+                setDialogSeverity("success"); // Color verde
+                setOpenDialog(true); // Abrir el diálogo
+            } catch (error) {
+                setDialogMessage(error.mensaje || "Error al actualizar la campaña");
+                setDialogSeverity("error"); // Color rojo
+                setOpenDialog(true); // Abrir el diálogo
+            }
+            // Pase lo que pase hemos terminado el proceso de actualización
+            setIsUpdating(false);
+        }
+
+        if (isUpdating) fetchUpdateCampaña();
+    }, [isUpdating]);
+
+    function handleChange(e) {
+        setCampaña({ ...campaña, [e.target.name]: e.target.value });
+    }
+
+    function handleChangeSwitch(e) {
+        setCampaña({ ...campaña, [e.target.name]: e.target.checked });
+    }
+
+    function handleClick() {
+        // evitar envíos duplicados por pulsar el botón tras el mensaje de inserción correcta
+        if (isUpdating) return;
+
+        if (validarDatos()) {
+            setIsUpdating(true);
+        }
+    }
+
+    function handleDialogClose() {
+        setOpenDialog(false);
+
+        navigate("/campañas");
+    }
+
+    function validarDatos() {
+        let valido = true;
+        let objetoValidacion = {
+            nombre_campana: true,
+            objetivo_litros_campana: true,
+            fecha_inicio_campana: true,
+            fecha_fin_campana: true,
+            urgente_campana: true,
+        };
+
+        // Validación del nombre_campana
+        if (campaña.nombre_campana.length &lt; 10 || campaña.nombre_campana.length > 100) {
+            valido = false;
+            objetoValidacion.nombre_campana = false;
+        }
+
+        // Validación de la objetivo_litros_campana
+        if (campaña.objetivo_litros_campana &lt; 50.00 || campaña.objetivo_litros_campana > 1000.00) {
+            valido = false;
+            objetoValidacion.objetivo_litros_campana = false;
+        }
+
+        // Validación de la fecha_inicio_campana como requerida
+        if (!campaña.fecha_inicio_campana) {
+            valido = false;
+            objetoValidacion.fecha_inicio_campana = false;
+        }
+
+        // Validación de la fecha_fin_campana como requerida
+        if (!campaña.fecha_fin_campana || campaña.fecha_fin_campana &lt; campaña.fecha_inicio_campana) {
+            valido = false;
+            objetoValidacion.fecha_fin_campana = false;
+        }
+
+        // Actualizamos con los campos correctos e incorrectos
+        setIsCamposValidos(objetoValidacion);
+
+        return valido;
+    }
+
+
+    return (
+        &lt;>
+            &lt;Grid
+                container
+                spacing={2}
+                sx={{
+                    justifyContent: "center",
+                    alignItems: "center",
+                }}>
+                &lt;Grid item size={{ xs: 12, sm: 9, md: 7 }}>
+                    &lt;Paper elevation={6} sx={{ mt: 3, p: 3, maxWidth: 900, mx: "auto" }}>
+                        &lt;Typography variant="h4" align="center" sx={{ mb: 3 }}>
+                            Modificación de Campaña
+                        &lt;/Typography>
+
+                        &lt;Grid
+                            container
+                            spacing={2}
+                            sx={{
+                                justifyContent: "center",
+                                alignItems: "center",
+                            }}>
+                            {/* Nombre de la campaña */}
+                            &lt;Grid item size={{ xs: 10 }}>
+                                &lt;TextField
+                                    required
+                                    fullWidth
+                                    id="name"
+                                    label="Nombre de la Campaña"
+                                    name="nombre_campana"
+                                    type="text"
+                                    maxLength="100"
+                                    value={campaña.nombre_campana}
+                                    onChange={handleChange}
+                                    error={!isCamposValidos.nombre_campana}
+                                    helperText={
+                                        !isCamposValidos.nombre_campana &amp;&amp; "El nombre es pequeño."
+                                    }
+                                />
+                            &lt;/Grid>
+                            {/* Objetivo litros de sangre */}
+                            &lt;Grid item size={{ xs: 10 }}>
+                                &lt;TextField
+                                    required
+                                    fullWidth
+                                    id="name"
+                                    label="Objetivo Litros de Sangre"
+                                    name="objetivo_litros_campana"
+                                    type="number"
+                                    slotProps={{
+                                        htmlInput: {
+                                            max: 1000.00, step: 2.5,
+                                        }
+                                    }}
+                                    value={campaña.objetivo_litros_campana}
+                                    onChange={handleChange}
+                                    error={!isCamposValidos.objetivo_litros_campana}
+                                    helperText={
+                                        !isCamposValidos.objetivo_litros_campana &amp;&amp; "Como minimo el objetivo debe de ser de 50.00."
+                                    }
+                                />
+                            &lt;/Grid>
+                            {/* Fecha de inicio y fin de la campaña */}
+                            &lt;Grid item size={{ xs: 10 }}>
+                                &lt;LocalizationProvider
+                                    dateAdapter={AdapterDayjs}
+                                    adapterLocale="es"
+                                >
+                                    &lt;DatePicker
+                                        label="Inicio de la campaña"
+                                        name="fecha_inicio_campana"
+                                        sx={{}}
+                                        slotProps={{
+                                            textField: {
+                                                required: true,
+                                                error: !isCamposValidos.fecha_inicio_campana,
+                                                helperText: !isCamposValidos.fecha_inicio_campana ? "La fecha es obligatoria" : "",
+                                            },
+                                        }}
+                                        value={
+                                            campaña.fecha_inicio_campana ? dayjs(campaña.fecha_inicio_campana) : null
+                                        }
+                                        onChange={(newValue) =>
+                                            setCampaña({
+                                                ...campaña,
+                                                fecha_inicio_campana: newValue.format("YYYY-MM-DD"),
+                                            })
+                                        }
+                                    />
+                                &lt;/LocalizationProvider>
+                            &lt;/Grid>
+                            &lt;Grid item size={{ xs: 10 }}>
+                                &lt;LocalizationProvider
+                                    dateAdapter={AdapterDayjs}
+                                    adapterLocale="es"
+                                >
+                                    &lt;DatePicker
+                                        label="Fin de la campaña"
+                                        name="fecha_fin_campana"
+                                        minDate={campaña.fecha_inicio_campana ? dayjs(campaña.fecha_inicio_campana) : null}
+                                        slotProps={{
+                                            textField: {
+                                                required: true,
+                                                error: !isCamposValidos.fecha_fin_campana,
+                                                helperText: !isCamposValidos.fecha_fin_campana
+                                                    ? "La fecha es obligatoria y no puede ser menor que la fecha de inicio"
+                                                    : "",
+                                            },
+                                        }}
+                                        value={
+                                            campaña.fecha_fin_campana &amp;&amp; campaña.fecha_fin_campana >= campaña.fecha_inicio_campana ? dayjs(campaña.fecha_fin_campana) : null
+                                        }
+                                        onChange={(newValue) =>
+                                            setCampaña({
+                                                ...campaña,
+                                                fecha_fin_campana: newValue.format("YYYY-MM-DD"),
+                                            })
+                                        }
+                                    />
+                                &lt;/LocalizationProvider>
+                            &lt;/Grid>
+                            {/* ¿Campaña urgente? */}
+                            &lt;Grid item size={{ xs: 10 }}>
+                                &lt;Typography variant="body1" align="start" sx={{ mb: 1, }}>
+                                    ¿Es urgente? {campaña.urgente_campana ? "Sí" : "No"}
+                                &lt;/Typography>
+                                &lt;Switch
+                                    checked={campaña.urgente_campana}
+                                    name="urgente_campana"
+                                    onChange={handleChangeSwitch}
+                                    slotProps={{ input: { 'aria-label': 'controlled' } }}
+                                />
+                            &lt;/Grid>
+                            {/* Botón de aceptar */}
+                            &lt;Grid
+                                item
+                                size={{ xs: 10 }}
+                                sx={{ display: "flex", justifyContent: "flex-end" }}
+                            >
+                                &lt;Button
+                                    variant="contained"
+                                    sx={{ mt: 3 }}
+                                    loading={isUpdating}
+                                    loadingPosition="end"
+                                    onClick={handleClick}
+                                >
+                                    Aceptar
+                                &lt;/Button>
+                            &lt;/Grid>
+                        &lt;/Grid>
+
+                    &lt;/Paper>
+                &lt;/Grid>
+            &lt;/Grid>
+
+            &lt;Dialogo
+                open={openDialog}
+                onClose={() => handleDialogClose()}
+                dialogSeverity={dialogSeverity}
+                dialogMessage={dialogMessage}
+            />
+        &lt;/>
+    );
+}
+
+export default ModificacionCampaña;</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-utils_generatePDF.html">utils/generatePDF</a></li></ul><h3>Global</h3><ul><li><a href="global.html#AltaCampa%25C3%25B1a">AltaCampaña</a></li><li><a href="global.html#AltaDonaciones">AltaDonaciones</a></li><li><a href="global.html#App">App</a></li><li><a href="global.html#BarraDeColor">BarraDeColor</a></li><li><a href="global.html#Dialogo">Dialogo</a></li><li><a href="global.html#Footer">Footer</a></li><li><a href="global.html#GraficaCampa%25C3%25B1as">GraficaCampañas</a></li><li><a href="global.html#Home">Home</a></li><li><a href="global.html#Inicio">Inicio</a></li><li><a href="global.html#ListadoCampa%25C3%25B1as">ListadoCampañas</a></li><li><a href="global.html#ListadoCampa%25C3%25B1asParametrizadas">ListadoCampañasParametrizadas</a></li><li><a href="global.html#ListadoCampa%25C3%25B1asParametrizadoPDF">ListadoCampañasParametrizadoPDF</a></li><li><a href="global.html#ListadoDonaciones">ListadoDonaciones</a></li><li><a href="global.html#ListadoDonacionesCard">ListadoDonacionesCard</a></li><li><a href="global.html#ListadoDonacionesParametrizado">ListadoDonacionesParametrizado</a></li><li><a href="global.html#ModificacionCampa%25C3%25B1a">ModificacionCampaña</a></li><li><a href="global.html#ModificacionDonacion">ModificacionDonacion</a></li><li><a href="global.html#Navbar">Navbar</a></li><li><a href="global.html#api">api</a></li><li><a href="global.html#mode">mode</a></li><li><a href="global.html#router">router</a></li><li><a href="global.html#setMode">setMode</a></li><li><a href="global.html#styles">styles</a></li><li><a href="global.html#useThemeStore">useThemeStore</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.5</a> on Mon Feb 09 2026 17:42:07 GMT+0100 (hora estándar de Europa central)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

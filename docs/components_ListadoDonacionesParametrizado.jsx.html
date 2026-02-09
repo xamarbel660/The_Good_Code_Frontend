@@ -1,0 +1,624 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: components/ListadoDonacionesParametrizado.jsx</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: components/ListadoDonacionesParametrizado.jsx</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
+ * @fileoverview Componente para la búsqueda avanzada de donaciones.
+ * Permite filtrar por campaña, datos del donante, rango de pesos, fechas y grupo sanguíneo.
+ */
+import DeleteIcon from "@mui/icons-material/Delete";
+import EditSquareIcon from "@mui/icons-material/EditSquare";
+import { FormControl, MenuItem } from "@mui/material";
+import Button from "@mui/material/Button";
+import Chip from "@mui/material/Chip";
+import Grid from "@mui/material/Grid";
+import InputLabel from "@mui/material/InputLabel";
+import Paper from "@mui/material/Paper";
+import Select from "@mui/material/Select";
+import TextField from "@mui/material/TextField";
+import Tooltip from "@mui/material/Tooltip";
+import Typography from "@mui/material/Typography";
+import { DataGrid } from "@mui/x-data-grid";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import dayjs from "dayjs";
+import "dayjs/locale/es";
+import { useEffect, useState } from "react";
+import api from "../utils/api.js";
+import Dialogo from "./Dialogo.jsx";
+
+/**
+ * Componente ListadoDonacionesParametrizado.
+ * Ofrece un formulario de filtros multicriterio para consultar donaciones.
+ * Muestra los resultados en un DataGrid y permite gestionar las donaciones encontradas.
+ * 
+ * @returns {JSX.Element} Interfaz de búsqueda y listado de donaciones.
+ */
+function ListadoDonacionesParametrizado() {
+  // Campaña seleccionada
+  /* const [campaña, setCampaña] = useState({
+    nombre_campana: "",
+    objetivo_litros_campana: 0.0,
+    fecha_inicio_campana: "",
+    fecha_fin_campana: "",
+    urgente_campana: false,
+  }); */
+
+  // Campañas del select
+  const [campañas, setCampañas] = useState([]);
+
+  // Donación (Estado del filtro)
+  // Almacena los criterios de búsqueda introducidos por el usuario
+  const [donacion, setDonacion] = useState({
+    id_campana: 0,
+    nombre_donante: "",
+    peso_donante_min: -1,
+    peso_donante_max: -1,
+    fecha_donacion_min: "",
+    fecha_donacion_max: "",
+    grupo_sanguineo: "",
+  });
+
+  const campaña = campañas.find(c => c.id_campana == donacion.id_campana) || {
+    nombre_campana: "",
+    objetivo_litros_campana: 0.00,
+    fecha_inicio_campana: "",
+    fecha_fin_campana: "",
+    urgente_campana: false,
+  };
+
+  const [isUpdating, setIsUpdating] = useState(false);
+  const [datosRecuperados, setDatosRecuperados] = useState([]);
+  const [error, setError] = useState(null);
+
+  // Para el dialogo
+  const [openDialog, setOpenDialog] = useState(false);
+  const [dialogMessage, setDialogMessage] = useState("");
+  const [dialogSeverity, setDialogSeverity] = useState("success");
+
+  /**
+   * Efecto para recuperar donaciones filtradas.
+   * Construye la query string con los parámetros no vacíos.
+   * Se ejecuta cuando isUpdating es true (al pulsar Buscar).
+   */
+  useEffect(() => {
+    async function fetchRecuperarDonaciones() {
+      try {
+        const respuesta = await api.get(
+          `/donaciones?id_campana=${donacion.id_campana == 0 ? "" : donacion.id_campana}&amp;nombre_donante=${donacion.nombre_donante}&amp;peso_donante_min=${donacion.peso_donante_min == -1 ? "" : donacion.peso_donante_min}&amp;peso_donante_max=${donacion.peso_donante_max == -1 ? "" : donacion.peso_donante_max}&amp;fecha_donacion_min=${donacion.fecha_donacion_min}&amp;fecha_donacion_max=${donacion.fecha_donacion_max}&amp;grupo_sanguineo=${donacion.grupo_sanguineo}`,
+        );
+        setDatosRecuperados(respuesta.datos);
+      } catch (error) {
+        console.error("Error al crear el director:", error);
+      }
+      // Pase lo que pase hemos terminado el proceso de actualización
+      setIsUpdating(false);
+    }
+
+    if (isUpdating) fetchRecuperarDonaciones();
+  }, [isUpdating]);
+
+  /**
+   * Efecto de carga inicial de campañas.
+   * Necesario para poblar el selector de campañas en el filtro.
+   */
+  useEffect(() => {
+    async function fetchRecuperarCampañas() {
+      try {
+        const respuesta = await api.get("/campanas/");
+        setCampañas(respuesta.datos);
+      } catch (error) {
+        setDialogMessage(error.mensaje || "Error al recuperar las campañas");
+        setDialogSeverity("error"); // Color rojo
+        setOpenDialog(true); // Abrir el diálogo
+      }
+    }
+
+    fetchRecuperarCampañas();
+  }, []);
+
+  // Cambio de valor en el formulario
+  function handleChange(e) {
+    if (e.target.name == "es_primera_vez") {
+      setDonacion({ ...donacion, [e.target.name]: e.target.checked });
+    } else if (e.target.name == "id_campana") {
+      setDonacion({ ...donacion, [e.target.name]: e.target.value });
+    } else {
+      setDonacion({ ...donacion, [e.target.name]: e.target.value });
+    }
+  }
+
+  /**
+   * Manejador del botón Buscar (Aceptar).
+   * Activa el flag isUpdating para disparar el efecto de búsqueda.
+   */
+  function handleClick() {
+    // evitar envíos duplicados por pulsar el botón tras el mensaje de inserción correcta
+    if (isUpdating) return;
+    setIsUpdating(true);
+  }
+
+  /**
+   * Resetea los filtros de búsqueda a sus valores por defecto.
+   */
+  function handleClean() {
+    setDonacion({
+      id_campana: 0,
+      nombre_donante: "",
+      peso_donante_min: -1,
+      peso_donante_max: -1,
+      fecha_donacion_min: "",
+      fecha_donacion_max: "",
+      grupo_sanguineo: "",
+    });
+  }
+
+  // Borrado de una campaña
+  async function handleDelete(id_campana) {
+    try {
+      await api.delete("/campanas/" + id_campana);
+
+      //Buscamos la campaña borrada y la quitamos de los datos
+      const datos_nuevos = datosRecuperados.filter(
+        (campana) => campana.id_campana != id_campana,
+      );
+      // Actualizamos los datos de campañas sin la que hemos borrado
+      setDatosRecuperados(datos_nuevos);
+      // Y no tenemos errores
+      setError(null);
+
+      setDialogMessage("Borrado con exito"); // Mensaje del dialogo
+      setDialogSeverity("success"); // Color de la alerta
+      setOpenDialog(true); // Abrir el diálogo
+    } catch (error) {
+      setError(error.mensaje || "No se pudo conectar al servidor");
+      setDatosRecuperados([]);
+
+      setDialogMessage(error.mensaje || "Error al borrar la donación");
+      setDialogSeverity("error");
+      setOpenDialog(true);
+    }
+  }
+
+  // Cerrando el dialogo
+  function handleDialogClose() {
+    setOpenDialog(false);
+  }
+
+  // Mensaje de error
+  if (error != null) {
+    return (
+      &lt;>
+        &lt;Typography variant="h5" align="center" sx={{ mt: 10 }}>
+          {error}
+        &lt;/Typography>
+      &lt;/>
+    );
+  }
+
+
+
+  // Columnas de la tabla
+  const columns = [
+    { field: 'id_donacion', headerName: 'ID', width: 70 },
+    {
+      field: 'nombre_campana',
+      headerName: 'Nombre Campaña',
+      width: 200,
+      // Usamos valueGetter para entrar en el objeto anidado
+      valueGetter: (value, row) => {
+        // "row" es la fila completa. Entramos al alias y luego al nombre.
+        return row.id_campana_campaña.nombre_campana || "Sin campaña";
+      }
+    },
+    {
+      field: 'nombre_donante',
+      headerName: 'Nombre Donante',
+      align: 'center',
+      headerAlign: "center",
+      width: 200,
+    },
+    {
+      field: 'peso_donante',
+      headerName: 'Peso Donante',
+      align: 'center',
+      headerAlign: "center",
+      width: 140,
+    },
+    {
+      field: 'fecha_donacion',
+      headerName: 'Fecha Donación',
+      align: 'center',
+      headerAlign: "center",
+      width: 150,
+      renderCell: (params) => {
+        // Formato de fecha que se pueda leer
+        return new Date(params.value).toLocaleDateString("es-ES");
+      },
+    },
+    {
+      field: 'es_primera_vez',
+      headerName: '¿Primera Vez?',
+      align: 'center',
+      headerAlign: "center",
+      width: 123,
+      renderCell: (params) => {
+        return params.value ? (
+          &lt;Chip label="Sí" color="success" size="small" />
+        ) : (
+          &lt;Chip label="No" color="default" size="small" variant="outlined" />
+        );
+      },
+    },
+    {
+      field: 'grupo_sanguineo',
+      headerName: 'Grupo Sanguíneo',
+      align: 'center',
+      headerAlign: "center",
+      width: 140,
+    },
+    {
+      field: 'acciones',
+      headerName: 'Acciones',
+      headerAlign: "center",
+      width: 225,
+      sortable: false, //para que no se pueda ordenar la columna
+      filterable: false, //para que no se pueda filtrar la columna
+      renderCell: (params) => {
+        // 'params' contiene toda la info de la fila.
+        // params.id es el ID que definimos con getRowId
+        return (
+          &lt;>
+            &lt;Tooltip
+              title="Borrar Donación"
+              arrow
+              disableInteractive
+              slotProps={{
+                popper: {
+                  modifiers: [
+                    {
+                      name: 'offset',
+                      options: {
+                        offset: [0, -7],
+                      },
+                    },
+                  ],
+                },
+              }}>
+              &lt;Button
+                variant="contained"
+                color="error"
+                onClick={() => handleDelete(params.id)}
+                sx={{ mx: 2, position: 'relative', }}
+              >
+                &lt;DeleteIcon />
+              &lt;/Button>
+            &lt;/Tooltip>
+
+            &lt;Tooltip
+              title="Editar Donación"
+              arrow
+              disableInteractive
+              slotProps={{
+                popper: {
+                  modifiers: [
+                    {
+                      name: 'offset',
+                      options: {
+                        offset: [0, -7],
+                      },
+                    },
+                  ],
+                },
+              }}>
+              &lt;Button
+                variant="contained"
+                color="primary"
+                onClick={() => { }}
+                sx={{ mx: 2, position: 'relative', }}
+                href={`/donaciones/edit/${params.id}`}
+              >
+                &lt;EditSquareIcon />
+              &lt;/Button>
+            &lt;/Tooltip>
+          &lt;/>
+        );
+      },
+    },
+  ];
+
+  return (
+    &lt;>
+      &lt;Grid
+        container
+        spacing={2}
+        sx={{
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
+        &lt;Grid item size={{ xs: 12, sm: 9, md: 7 }}>
+          &lt;Paper elevation={6} sx={{ my: 3, p: 3, maxWidth: 900, mx: "auto" }}>
+            &lt;Typography variant="h4" align="center" sx={{ mb: 3 }}>
+              Listado de Donaciones Parametrizado
+            &lt;/Typography>
+
+            &lt;Grid
+              container
+              spacing={3}
+              sx={{
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              {/* Select Campaña */}
+              &lt;Grid item size={{ xs: 10 }}>
+                &lt;FormControl fullWidth>
+                  &lt;InputLabel id="campaña">Campaña&lt;/InputLabel>
+                  &lt;Select
+                    labelId="campaña"
+                    id="campaña"
+                    name="id_campana"
+                    value={donacion.id_campana}
+                    label="campaña"
+                    onChange={handleChange}
+                  >
+                    {campañas.map((campañas) => (
+                      &lt;MenuItem
+                        key={campañas.id_campana}
+                        value={campañas.id_campana}
+                      >
+                        {campañas.nombre_campana}
+                      &lt;/MenuItem>
+                    ))}
+                  &lt;/Select>
+                &lt;/FormControl>
+              &lt;/Grid>
+
+              {/* Nombre Donante */}
+              &lt;Grid item size={{ xs: 10 }}>
+                &lt;TextField
+                  required
+                  fullWidth
+                  id="nombre_donante"
+                  label="Nombre del Donante"
+                  name="nombre_donante"
+                  type="text"
+                  slotProps={{
+                    htmlInput: {
+                      maxLength: 50,
+                    },
+                  }}
+                  value={donacion.nombre_donante}
+                  onChange={handleChange}
+                />
+              &lt;/Grid>
+
+              {/* Peso del Donante Minimo*/}
+              &lt;Grid item size={{ xs: 10 }}>
+                &lt;TextField
+                  required
+                  fullWidth
+                  id="peso_donante_min"
+                  label="Peso del Donante Min"
+                  name="peso_donante_min"
+                  type="number"
+                  slotProps={{
+                    htmlInput: {
+                      max: 1000.00,
+                      min: 50.00,
+                      step: 2.5,
+                    },
+                  }}
+                  value={donacion.peso_donante_min == -1 ? "" : donacion.peso_donante_min}
+                  onChange={handleChange}
+                />
+              &lt;/Grid>
+
+              {/* Peso del Donante Maximo*/}
+              &lt;Grid item size={{ xs: 10 }}>
+                &lt;TextField
+                  required
+                  fullWidth
+                  id="peso_donante_max"
+                  label="Peso del Donante Max"
+                  name="peso_donante_max"
+                  type="number"
+                  slotProps={{
+                    htmlInput: {
+                      max: 1000.00,
+                      min: 50.00,
+                      step: 2.5,
+                    },
+                  }}
+                  value={donacion.peso_donante_max == -1 ? "" : donacion.peso_donante_max}
+                  onChange={handleChange}
+                />
+              &lt;/Grid>
+
+              {/* Fecha minima de donacion */}
+              &lt;Grid item size={{ xs: 10 }}>
+                &lt;LocalizationProvider
+                  dateAdapter={AdapterDayjs}
+                  adapterLocale="es"
+                >
+                  &lt;DatePicker
+                    label="Fecha minima de Donación"
+                    name="fecha_donacion_min"
+                    maxDate={campaña.fecha_fin_campana ? dayjs(campaña.fecha_fin_campana) : null}
+                    minDate={campaña.fecha_inicio_campana ? dayjs(campaña.fecha_inicio_campana) : null}
+                    slotProps={{
+                      textField: {
+                        required: true,
+                      },
+                    }}
+                    value={
+                      donacion.fecha_donacion_min
+                        ? dayjs(donacion.fecha_donacion_min)
+                        : null
+                    }
+                    onChange={(newValue) =>
+                      setDonacion({
+                        ...donacion,
+                        fecha_donacion_min: newValue.format("YYYY-MM-DD"),
+                      })
+                    }
+                  />
+                &lt;/LocalizationProvider>
+              &lt;/Grid>
+
+              {/* Fecha maxima de donacion */}
+              &lt;Grid item size={{ xs: 10 }}>
+                &lt;LocalizationProvider
+                  dateAdapter={AdapterDayjs}
+                  adapterLocale="es"
+                >
+                  &lt;DatePicker
+                    label="Fecha maxima de Donación"
+                    name="fecha_donacion_max"
+                    maxDate={campaña.fecha_fin_campana ? dayjs(campaña.fecha_fin_campana) : null}
+                    minDate={campaña.fecha_inicio_campana ? dayjs(campaña.fecha_inicio_campana) : null}
+                    slotProps={{
+                      textField: {
+                        required: true,
+                      },
+                    }}
+                    value={
+                      donacion.fecha_donacion_max
+                        ? dayjs(donacion.fecha_donacion_max)
+                        : null
+                    }
+                    onChange={(newValue) =>
+                      setDonacion({
+                        ...donacion,
+                        fecha_donacion_max: newValue.format("YYYY-MM-DD"),
+                      })
+                    }
+                  />
+                &lt;/LocalizationProvider>
+              &lt;/Grid>
+
+              {/* Grupo sanguineo */}
+              &lt;Grid item size={{ xs: 10 }}>
+                &lt;TextField
+                  required
+                  id="grupo_sanguineo"
+                  label="Grupo Sangíneo"
+                  name="grupo_sanguineo"
+                  type="text"
+                  slotProps={{
+                    htmlInput: {
+                      maxLength: 3,
+                    },
+                  }}
+                  value={donacion.grupo_sanguineo}
+                  onChange={handleChange}
+                />
+              &lt;/Grid>
+
+              {/* Botón de aceptar y limpiar */}
+              &lt;Grid
+                item
+                size={{ xs: 10 }}
+                sx={{ display: "flex", justifyContent: "flex-end" }}
+              >
+                &lt;Button
+                  variant="contained"
+                  sx={{ mt: 3, mr: 2 }}
+                  loading={isUpdating}
+                  loadingPosition="end"
+                  onClick={handleClean}
+                >
+                  Limpiar
+                &lt;/Button>
+                &lt;Button
+                  variant="contained"
+                  sx={{ mt: 3 }}
+                  loading={isUpdating}
+                  loadingPosition="end"
+                  onClick={handleClick}
+                >
+                  Aceptar
+                &lt;/Button>
+              &lt;/Grid>
+
+            &lt;/Grid>
+          &lt;/Paper>
+        &lt;/Grid>
+      &lt;/Grid>
+
+      {/* Tabla de donaciones */}
+      &lt;DataGrid
+        rows={datosRecuperados}
+        columns={columns}
+        getRowId={(datos) => datos.id_donacion} // Especificamos el campo que actua como ID unico
+        initialState={{
+          pagination: {
+            paginationModel: {
+              pageSize: 5,
+            },
+          },
+        }}
+        pageSizeOptions={[5]}
+      />
+
+      {/* Dialogo para cuando se borra una donacion */}
+      &lt;Dialogo
+        open={openDialog}
+        onClose={() => handleDialogClose()}
+        dialogSeverity={dialogSeverity}
+        dialogMessage={dialogMessage}
+      />
+    &lt;/>
+  );
+}
+
+export default ListadoDonacionesParametrizado;
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-utils_generatePDF.html">utils/generatePDF</a></li></ul><h3>Global</h3><ul><li><a href="global.html#AltaCampa%25C3%25B1a">AltaCampaña</a></li><li><a href="global.html#AltaDonaciones">AltaDonaciones</a></li><li><a href="global.html#App">App</a></li><li><a href="global.html#BarraDeColor">BarraDeColor</a></li><li><a href="global.html#Dialogo">Dialogo</a></li><li><a href="global.html#Footer">Footer</a></li><li><a href="global.html#GraficaCampa%25C3%25B1as">GraficaCampañas</a></li><li><a href="global.html#Home">Home</a></li><li><a href="global.html#Inicio">Inicio</a></li><li><a href="global.html#ListadoCampa%25C3%25B1as">ListadoCampañas</a></li><li><a href="global.html#ListadoCampa%25C3%25B1asParametrizadas">ListadoCampañasParametrizadas</a></li><li><a href="global.html#ListadoCampa%25C3%25B1asParametrizadoPDF">ListadoCampañasParametrizadoPDF</a></li><li><a href="global.html#ListadoDonaciones">ListadoDonaciones</a></li><li><a href="global.html#ListadoDonacionesCard">ListadoDonacionesCard</a></li><li><a href="global.html#ListadoDonacionesParametrizado">ListadoDonacionesParametrizado</a></li><li><a href="global.html#ModificacionCampa%25C3%25B1a">ModificacionCampaña</a></li><li><a href="global.html#ModificacionDonacion">ModificacionDonacion</a></li><li><a href="global.html#Navbar">Navbar</a></li><li><a href="global.html#api">api</a></li><li><a href="global.html#mode">mode</a></li><li><a href="global.html#router">router</a></li><li><a href="global.html#setMode">setMode</a></li><li><a href="global.html#styles">styles</a></li><li><a href="global.html#useThemeStore">useThemeStore</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.5</a> on Mon Feb 09 2026 17:42:07 GMT+0100 (hora estándar de Europa central)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

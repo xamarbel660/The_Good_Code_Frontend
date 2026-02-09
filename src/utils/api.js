@@ -4,7 +4,7 @@ import axios from 'axios';
  * Instancia configurada de Axios para comunicación con el backend.
  * 
  * @constant
- * @type {import('axios').AxiosInstance}
+ * @type {Object}
  * @property {string} baseURL - URL base para todas las peticiones (http://localhost:3000/api)
  * @property {number} timeout - Tiempo máximo de espera por petición (5000ms)
  * @property {object} headers - Cabeceras por defecto (Content-Type: application/json)

@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: components/Navbar.jsx</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: components/Navbar.jsx</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
+ * @fileoverview Barra de navegación principal de la aplicación.
+ * Gestiona la navegación entre páginas, el menú adaptativo (responsive) y el cambio de tema.
+ */
+import Brightness4Icon from '@mui/icons-material/Brightness4';
+import Brightness7Icon from '@mui/icons-material/Brightness7';
+import EmergencyIcon from '@mui/icons-material/Emergency';
+import MenuIcon from "@mui/icons-material/Menu";
+import AppBar from "@mui/material/AppBar";
+import Box from "@mui/material/Box";
+import Button from "@mui/material/Button";
+import Container from "@mui/material/Container";
+import Divider from "@mui/material/Divider";
+import IconButton from "@mui/material/IconButton";
+import ListSubheader from "@mui/material/ListSubheader";
+import Menu from "@mui/material/Menu";
+import MenuItem from "@mui/material/MenuItem";
+import Toolbar from "@mui/material/Toolbar";
+import Typography from "@mui/material/Typography";
+import * as React from "react";
+import { Link } from "react-router";
+import useThemeStore from '../stores/useThemeStore';
+import styles from "../css/Impresion.module.css";
+
+
+/**
+ * Componente Navbar.
+ * Renderiza la barra superior con el logo, enlaces de navegación y controles de usuario.
+ * Adaptable a diferentes tamaños de pantalla (xs: menú hamburguesa, md: menú horizontal).
+ * 
+ * @returns {JSX.Element} Barra de navegación completa.
+ */
+function Navbar() {
+  const [anclaMenuCampanas, setAnclaMenuCampanas] = React.useState(null);
+  const [anclaMenuDonaciones, setAnclaMenuDonaciones] = React.useState(null);
+  const [anclaMenuXS, setAnclaMenuXS] = React.useState(null);
+
+  // Recuperamos el modo (dark / light) y la función para cambiarlo (setMode) del store global.
+  const { mode, setMode } = useThemeStore();
+
+  const handleClickMenuCampanas = (event) => {
+    setAnclaMenuCampanas(event.currentTarget);
+  };
+
+  const handleClickMenuDonaciones = (event) => {
+    setAnclaMenuDonaciones(event.currentTarget);
+  };
+
+  const handleClickMenuXS = (event) => {
+    setAnclaMenuXS(event.currentTarget);
+  };
+
+  const handleCloseNavMenu = () => {
+    setAnclaMenuCampanas(null);
+    setAnclaMenuDonaciones(null);
+    setAnclaMenuXS(null);
+  };
+
+  const linkStyle = { color: "black", textDecoration: "none" };
+
+  return (
+    // Estilo para que no se imprima la navbar (Metodo window.print()).
+    // Se utiliza la clase 'styles.noprint' importada del módulo CSS.
+    &lt;AppBar position="static" color="error" className={styles.noprint}>
+      &lt;Container maxWidth="xl">
+        &lt;Toolbar disableGutters>
+          {/* Menú para resolución xs  */}
+          &lt;Box sx={{ flexGrow: 1, display: { xs: "flex", md: "none" } }}>
+            &lt;IconButton
+              size="large"
+              aria-label="menu movies db resolucion xs"
+              aria-controls="menu-appbar"
+              aria-haspopup="true"
+              onClick={handleClickMenuXS}
+              color="inherit"
+            >
+              &lt;MenuIcon />
+            &lt;/IconButton>
+            &lt;Menu
+              id="menu-appbar-xs"
+              anchorEl={anclaMenuXS}
+              anchorOrigin={{
+                vertical: "bottom",
+                horizontal: "left",
+              }}
+              keepMounted
+              transformOrigin={{
+                vertical: "top",
+                horizontal: "left",
+              }}
+              open={Boolean(anclaMenuXS)}
+              onClose={handleCloseNavMenu}
+              sx={{ display: { xs: "block", md: "none" } }}
+            >
+              &lt;ListSubheader>Menú Campañas&lt;/ListSubheader>
+              &lt;MenuItem onClick={handleCloseNavMenu}>
+                &lt;Link to="/campañas/new" style={linkStyle}>
+                  &lt;Typography sx={{ textAlign: "center" }}>
+                    Alta de campañas
+                  &lt;/Typography>
+                &lt;/Link>
+              &lt;/MenuItem>
+              &lt;MenuItem onClick={handleCloseNavMenu}>
+                &lt;Link to="/campañas" style={linkStyle}>
+                  &lt;Typography sx={{ textAlign: "center" }}>
+                    Listado de campañas
+                  &lt;/Typography>
+                &lt;/Link>
+              &lt;/MenuItem>
+              &lt;MenuItem onClick={handleCloseNavMenu}>
+                &lt;Link to="/campañas/graph" style={linkStyle}>
+                  &lt;Typography sx={{ textAlign: "center" }}>
+                    Gráfica de campañas
+                  &lt;/Typography>
+                &lt;/Link>
+              &lt;/MenuItem>
+              &lt;MenuItem onClick={handleCloseNavMenu}>
+                &lt;Link to="/campañas/parametrizado" style={linkStyle}>
+                  &lt;Typography sx={{ textAlign: "center" }}>
+                    Listado de campañas parametrizado
+                  &lt;/Typography>
+                &lt;/Link>
+              &lt;/MenuItem>
+              &lt;Divider />
+              &lt;ListSubheader>Menú Donaciones&lt;/ListSubheader>
+              &lt;MenuItem onClick={handleCloseNavMenu}>
+                &lt;Link to="/donaciones/new" style={linkStyle}>
+                  &lt;Typography sx={{ textAlign: "center" }}>
+                    Alta de donaciones
+                  &lt;/Typography>
+                &lt;/Link>
+              &lt;/MenuItem>
+              &lt;MenuItem onClick={handleCloseNavMenu}>
+                &lt;Link to="/donaciones" style={linkStyle}>
+                  &lt;Typography sx={{ textAlign: "center" }}>
+                    Listado de donaciones
+                  &lt;/Typography>
+                &lt;/Link>
+              &lt;/MenuItem>
+              &lt;MenuItem onClick={handleCloseNavMenu}>
+                &lt;Link to="/donaciones/parametrizado" style={linkStyle}>
+                  &lt;Typography sx={{ textAlign: "center" }}>
+                    Listado de donaciones parametrizado
+                  &lt;/Typography>
+                &lt;/Link>
+              &lt;/MenuItem>
+              &lt;MenuItem onClick={handleCloseNavMenu}>
+                &lt;Link to="/donaciones/cards" style={linkStyle}>
+                  &lt;Typography sx={{ textAlign: "center" }}>
+                    Listado de donaciones cards
+                  &lt;/Typography>
+                &lt;/Link>
+              &lt;/MenuItem>
+            &lt;/Menu>
+          &lt;/Box>
+
+          {/* Logo y nombre de la web */}
+          &lt;EmergencyIcon />
+          &lt;Typography
+            variant="h6"
+            noWrap
+            component="a"
+            href="/"
+            sx={{
+              mx: 2,
+              fontFamily: "monospace",
+              fontWeight: 700,
+              letterSpacing: ".3rem",
+              color: "inherit",
+              textDecoration: "none",
+            }}
+          >
+            Hospital Good Code
+          &lt;/Typography>
+
+          {/* Menú para resolución md */}
+          &lt;Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" } }}>
+            {/* Menú para campañas en md */}
+            &lt;Button
+              onClick={handleClickMenuCampanas}
+              sx={{ my: 2, color: "white", display: "block" }}
+            >
+              Campañas
+            &lt;/Button>
+            &lt;Menu
+              id="menu-campañas"
+              anchorEl={anclaMenuCampanas}
+              anchorOrigin={{
+                vertical: "bottom",
+                horizontal: "left",
+              }}
+              keepMounted
+              transformOrigin={{
+                vertical: "top",
+                horizontal: "left",
+              }}
+              open={Boolean(anclaMenuCampanas)}
+              onClose={handleCloseNavMenu}
+              sx={{ display: { xs: "none", md: "flex" } }}
+            >
+              &lt;MenuItem onClick={handleCloseNavMenu}>
+                &lt;Link to="/campañas/new" style={linkStyle}>
+                  &lt;Typography sx={{ textAlign: "center" }}>
+                    Alta de campañas
+                  &lt;/Typography>
+                &lt;/Link>
+              &lt;/MenuItem>
+              &lt;MenuItem onClick={handleCloseNavMenu}>
+                &lt;Link to="/campañas" style={linkStyle}>
+                  &lt;Typography sx={{ textAlign: "center" }}>
+                    Listado de campañas
+                  &lt;/Typography>
+                &lt;/Link>
+              &lt;/MenuItem>
+              &lt;MenuItem onClick={handleCloseNavMenu}>
+                &lt;Link to="/campañas/graph" style={linkStyle}>
+                  &lt;Typography sx={{ textAlign: "center" }}>
+                    Gráfica de campañas
+                  &lt;/Typography>
+                &lt;/Link>
+              &lt;/MenuItem>
+              &lt;MenuItem onClick={handleCloseNavMenu}>
+                &lt;Link to="/campañas/parametrizado" style={linkStyle}>
+                  &lt;Typography sx={{ textAlign: "center" }}>
+                    Listado de campañas parametrizado
+                  &lt;/Typography>
+                &lt;/Link>
+              &lt;/MenuItem>
+            &lt;/Menu>
+
+            {/* Menú para donaciones en md */}
+            &lt;Button
+              onClick={handleClickMenuDonaciones}
+              sx={{ my: 2, color: "white", display: "block" }}
+            >
+              Donaciones
+            &lt;/Button>
+            &lt;Menu
+              id="menu-donaciones"
+              anchorEl={anclaMenuDonaciones}
+              anchorOrigin={{
+                vertical: "bottom",
+                horizontal: "left",
+              }}
+              keepMounted
+              transformOrigin={{
+                vertical: "top",
+                horizontal: "left",
+              }}
+              open={Boolean(anclaMenuDonaciones)}
+              onClose={handleCloseNavMenu}
+              sx={{ display: { xs: "none", md: "flex" } }}
+            >
+              &lt;MenuItem onClick={handleCloseNavMenu}>
+                &lt;Link to="/donaciones/new" style={linkStyle}>
+                  &lt;Typography sx={{ textAlign: "center" }}>
+                    Alta de donaciones
+                  &lt;/Typography>
+                &lt;/Link>
+              &lt;/MenuItem>
+              &lt;MenuItem onClick={handleCloseNavMenu}>
+                &lt;Link to="/donaciones" style={linkStyle}>
+                  &lt;Typography sx={{ textAlign: "center" }}>
+                    Listado de donaciones
+                  &lt;/Typography>
+                &lt;/Link>
+              &lt;/MenuItem>
+              &lt;MenuItem onClick={handleCloseNavMenu}>
+                &lt;Link to="/donaciones/parametrizado" style={linkStyle}>
+                  &lt;Typography sx={{ textAlign: "center" }}>
+                    Listado de donaciones parametrizado
+                  &lt;/Typography>
+                &lt;/Link>
+              &lt;/MenuItem>
+              &lt;MenuItem onClick={handleCloseNavMenu}>
+                &lt;Link to="/donaciones/cards" style={linkStyle}>
+                  &lt;Typography sx={{ textAlign: "center" }}>
+                    Listado de donaciones cards
+                  &lt;/Typography>
+                &lt;/Link>
+              &lt;/MenuItem>
+            &lt;/Menu>
+            {/* Fin menú para donaciones en md */}
+
+          &lt;/Box>
+          {/* Fin menú para resolución md */}
+
+          {/* Botón para cambiar el tema de color */}
+          &lt;Box sx={{ ml: 2 }}>
+            &lt;IconButton sx={{ ml: 1 }} onClick={setMode} color="inherit">
+              {mode === 'dark' ? &lt;Brightness7Icon /> : &lt;Brightness4Icon />}
+            &lt;/IconButton>
+          &lt;/Box>
+
+        &lt;/Toolbar>
+      &lt;/Container>
+    &lt;/AppBar>
+  );
+}
+
+export default Navbar;
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-utils_generatePDF.html">utils/generatePDF</a></li></ul><h3>Global</h3><ul><li><a href="global.html#AltaCampa%25C3%25B1a">AltaCampaña</a></li><li><a href="global.html#AltaDonaciones">AltaDonaciones</a></li><li><a href="global.html#App">App</a></li><li><a href="global.html#BarraDeColor">BarraDeColor</a></li><li><a href="global.html#Dialogo">Dialogo</a></li><li><a href="global.html#Footer">Footer</a></li><li><a href="global.html#GraficaCampa%25C3%25B1as">GraficaCampañas</a></li><li><a href="global.html#Home">Home</a></li><li><a href="global.html#Inicio">Inicio</a></li><li><a href="global.html#ListadoCampa%25C3%25B1as">ListadoCampañas</a></li><li><a href="global.html#ListadoCampa%25C3%25B1asParametrizadas">ListadoCampañasParametrizadas</a></li><li><a href="global.html#ListadoCampa%25C3%25B1asParametrizadoPDF">ListadoCampañasParametrizadoPDF</a></li><li><a href="global.html#ListadoDonaciones">ListadoDonaciones</a></li><li><a href="global.html#ListadoDonacionesCard">ListadoDonacionesCard</a></li><li><a href="global.html#ListadoDonacionesParametrizado">ListadoDonacionesParametrizado</a></li><li><a href="global.html#ModificacionCampa%25C3%25B1a">ModificacionCampaña</a></li><li><a href="global.html#ModificacionDonacion">ModificacionDonacion</a></li><li><a href="global.html#Navbar">Navbar</a></li><li><a href="global.html#api">api</a></li><li><a href="global.html#mode">mode</a></li><li><a href="global.html#router">router</a></li><li><a href="global.html#setMode">setMode</a></li><li><a href="global.html#styles">styles</a></li><li><a href="global.html#useThemeStore">useThemeStore</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.5</a> on Mon Feb 09 2026 17:42:07 GMT+0100 (hora estándar de Europa central)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

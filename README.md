@@ -37,3 +37,13 @@ Sigue estos pasos para poner en marcha la aplicación:
 ## ℹ️ Otra Información
 
 En la BD se utiliza campanas en vez de campañas
+
+Botón de imprimir con metodo **windows.print()** esta en la pantalla:
+    - Listado de donaciones en Cards
+
+Botón de imprimir con metodo **jsPDF y html2canvas** esta en las pantallas:
+    - Listado de Campañas
+    - Grafica de campañas
+
+Botón de imprimir con metodo **react-pdf** esta en la pantalla:
+    - Listado de Campañas Parametrizado (Hacer busqueda para que aparezca el boton)

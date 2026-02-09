@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: App.jsx</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: App.jsx</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
+ * @fileoverview Componente raíz y configuración de enrutamiento principal.
+ * Define la estructura de navegación y la gestión del tema visual.
+ */
+import CssBaseline from '@mui/material/CssBaseline';
+import { ThemeProvider, createTheme } from '@mui/material/styles';
+import { createBrowserRouter } from "react-router";
+import { RouterProvider } from "react-router/dom";
+import AltaCampaña from "./components/AltaCampaña";
+import AltaDonacion from "./components/AltaDonacion";
+import Inicio from "./components/Inicio";
+import ListadoCampañas from "./components/ListadoCampañas";
+import ListadoCampañasParametrizado from "./components/ListadoCampañasParametrizado";
+import ListadoDonaciones from "./components/ListadoDonaciones";
+import ListadoDonacionesCard from './components/ListadoDonacionesCard';
+import ListadoDonacionesParametrizado from "./components/ListadoDonacionesParametrizado";
+import ModificacionCampaña from "./components/ModificacionCampaña";
+import ModificacionDonacion from "./components/ModificacionDonacion";
+import ErrorPage from "./pages/ErrorPage";
+import Home from "./pages/Home";
+import useThemeStore from './stores/useThemeStore';
+import GraficaCampañas from './components/GraficaCampañas';
+
+
+/**
+ * Configuración del enrutador principal de la aplicación.
+ * Define las rutas y sus componentes correspondientes.
+ * Utiliza createBrowserRouter para habilitar las funcionalidades de datos de React Router v6.4+.
+ * 
+ * Estructura de rutas:
+ * - /: Home (layout principal)
+ *   - /: Inicio (página de bienvenida)
+ *   - /campañas/*: Rutas relacionadas con campañas
+ *   - /donaciones/*: Rutas relacionadas con donaciones
+ */
+const router = createBrowserRouter([
+  {
+    path: "/",
+    Component: Home,
+    errorElement: &lt;ErrorPage />,
+    children: [
+      // Todo esto se ve en el Outlet de Home.jsx
+      { index: true, Component: Inicio }, // Esto se ve en la ruta padre
+      {
+        path: "/campañas",
+        element: &lt;ListadoCampañas />,
+      },
+      {
+        path: "/campañas/parametrizado",
+        element: &lt;ListadoCampañasParametrizado />,
+      },
+      {
+        path: "/campañas/new",
+        element: &lt;AltaCampaña />,
+      },
+      {
+        path: "/campañas/graph",
+        element: &lt;GraficaCampañas />
+      },
+      {
+        path: "/campañas/edit/:id",
+        element: &lt;ModificacionCampaña />,
+      },
+      {
+        path: "/donaciones",
+        element: &lt;ListadoDonaciones />,
+      },
+      {
+        path: "/donaciones/cards",
+        element: &lt;ListadoDonacionesCard />,
+      },
+      {
+        path: "/donaciones/parametrizado",
+        element: &lt;ListadoDonacionesParametrizado />,
+      },
+      {
+        path: "/donaciones/new",
+        element: &lt;AltaDonacion />,
+      },
+      {
+        path: "/donaciones/edit/:id",
+        element: &lt;ModificacionDonacion />,
+      },
+    ],
+  },
+]);
+
+/**
+ * Componente principal de la aplicación.
+ * Gestiona el tema global y provee el contexto de enrutamiento.
+ * 
+ * @returns {JSX.Element} La aplicación completa envuelta en proveedores de contexto.
+ */
+function App() {
+  // Recuperamos el modo (dark / light) del store global de Zustand
+  // Esto permite persistencia del tema entre recargas
+  const mode = useThemeStore((state) => state.mode);
+  // Creamos el tema de Material UI dinámicamente basado en el modo actual
+  const theme = createTheme({
+    palette: {
+      mode: mode,
+    }
+  });
+
+  return (
+    &lt;>
+      &lt;ThemeProvider theme={theme}>
+        {/* CssBaseline aplica estilos base de MUI */}
+        &lt;CssBaseline />
+        &lt;RouterProvider router={router} />
+      &lt;/ThemeProvider>
+    &lt;/>
+  );
+}
+export default App
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-utils_generatePDF.html">utils/generatePDF</a></li></ul><h3>Global</h3><ul><li><a href="global.html#AltaCampa%25C3%25B1a">AltaCampaña</a></li><li><a href="global.html#AltaDonaciones">AltaDonaciones</a></li><li><a href="global.html#App">App</a></li><li><a href="global.html#BarraDeColor">BarraDeColor</a></li><li><a href="global.html#Dialogo">Dialogo</a></li><li><a href="global.html#Footer">Footer</a></li><li><a href="global.html#GraficaCampa%25C3%25B1as">GraficaCampañas</a></li><li><a href="global.html#Home">Home</a></li><li><a href="global.html#Inicio">Inicio</a></li><li><a href="global.html#ListadoCampa%25C3%25B1as">ListadoCampañas</a></li><li><a href="global.html#ListadoCampa%25C3%25B1asParametrizadas">ListadoCampañasParametrizadas</a></li><li><a href="global.html#ListadoCampa%25C3%25B1asParametrizadoPDF">ListadoCampañasParametrizadoPDF</a></li><li><a href="global.html#ListadoDonaciones">ListadoDonaciones</a></li><li><a href="global.html#ListadoDonacionesCard">ListadoDonacionesCard</a></li><li><a href="global.html#ListadoDonacionesParametrizado">ListadoDonacionesParametrizado</a></li><li><a href="global.html#ModificacionCampa%25C3%25B1a">ModificacionCampaña</a></li><li><a href="global.html#ModificacionDonacion">ModificacionDonacion</a></li><li><a href="global.html#Navbar">Navbar</a></li><li><a href="global.html#api">api</a></li><li><a href="global.html#mode">mode</a></li><li><a href="global.html#router">router</a></li><li><a href="global.html#setMode">setMode</a></li><li><a href="global.html#styles">styles</a></li><li><a href="global.html#useThemeStore">useThemeStore</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.5</a> on Mon Feb 09 2026 17:42:07 GMT+0100 (hora estándar de Europa central)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: components/ListadoCampañasParametrizadoPDF.jsx</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: components/ListadoCampañasParametrizadoPDF.jsx</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
+ * @fileoverview Documento PDF para el listado de campañas.
+ * Define la estructura y estilos del reporte generado con @react-pdf/renderer.
+ */
+import {
+  Document,
+  Page,
+  Text,
+  View,
+  StyleSheet,
+  Image,
+} from "@react-pdf/renderer";
+
+/**
+ * Estilos para el documento PDF.
+ * Define el layout de página, tablas y tipografía.
+ */
+const styles = StyleSheet.create({
+  // Estilos de página: padding interno y tamaño de fuente base
+  page: {
+    padding: 20,
+    fontSize: 10,
+  },
+  // Estilos del título: centrado, fuerte, con separación inferior
+  title: {
+    fontSize: 20,
+    fontWeight: "bold",
+    marginBottom: 20,
+    textAlign: "center",
+  },
+  // Estilos de tabla: ancho completo, flexbox para filas
+  table: {
+    display: "table",
+    width: "100%",
+    // borderStyle: "solid",
+    // borderWidth: 1,
+    // borderColor: "#bfbfbf",
+    marginTop: 20,
+  },
+  // Estilos de fila: dirección horizontal
+  tableRow: {
+    margin: "auto",
+    flexDirection: "row",
+  },
+  // Estilos de encabezado: fondo gris, bordes, 25% ancho (4 columnas)
+  tableColHeader: {
+    width: "25%",
+    borderStyle: "solid",
+    borderWidth: 1,
+    borderColor: "#bfbfbf",
+    backgroundColor: "#f0f0f0",
+    padding: 8,
+    fontWeight: "bold",
+  },
+  // Estilos de columna de datos: bordes, ancho proporcional
+  tableCol: {
+    width: "25%",
+    borderStyle: "solid",
+    borderWidth: 1,
+    borderColor: "#bfbfbf",
+    padding: 8,
+  },
+  // Estilos de celda: tamaño de fuente reducido para tabla
+  tableCell: {
+    margin: "auto",
+    marginTop: 5,
+    fontSize: 9,
+  },
+});
+
+
+/**
+ * Componente que representa el documento PDF a generar.
+ * Recibe los datos de campañas y los renderiza en una tabla formateada.
+ * 
+ * @param {Object} props - Propiedades del componente.
+ * @param {Array} props.data - Array de objetos de campaña a mostrar en el reporte.
+ * @returns {JSX.Element} Documento PDF.
+ */
+function ListadoCampañasParametrizadoPDF({ data }) {
+  return (
+    // Documento PDF con página tamaño A4
+    &lt;Document>
+      &lt;Page size="A4" style={styles.page}>
+        {/* Título del documento PDF */}
+        &lt;View style={styles.title}>
+          &lt;Text>Listado de Campañas&lt;/Text>
+        &lt;/View>
+
+        {/* Tabla principal */}
+        &lt;View style={styles.table}>
+          {/* Fila de encabezados */}
+          &lt;View style={styles.tableRow}>
+            {/* Columna: Nombre Campaña */}
+            &lt;View style={styles.tableColHeader}>
+              &lt;Text style={styles.tableCell}>Nombre Campaña&lt;/Text>
+            &lt;/View>
+            {/* Columna: Objetivo Litros Sangre */}
+            &lt;View style={styles.tableColHeader}>
+              &lt;Text style={styles.tableCell}>Objetivo Litros Sangre&lt;/Text>
+            &lt;/View>
+            {/* Columna: Fecha Inicio */}
+            &lt;View style={styles.tableColHeader}>
+              &lt;Text style={styles.tableCell}>Fecha Inicio&lt;/Text>
+            &lt;/View>
+            {/* Columna: Fecha Fin */}
+            &lt;View style={styles.tableColHeader}>
+              &lt;Text style={styles.tableCell}>Fecha Fin&lt;/Text>
+            &lt;/View>
+            {/* Columna: Foto (comentada - no se utiliza actualmente) */}
+            {/* &lt;View style={styles.tableColHeader}>
+              &lt;Text style={styles.tableCell}>Foto&lt;/Text>
+            &lt;/View> */}
+          &lt;/View>
+
+          {/* Renderizar filas de datos para cada campaña */}
+          {data.map((campaña, index) => (
+            &lt;View style={styles.tableRow} key={index}>
+              {/* Celda: Nombre de la campaña */}
+              &lt;View style={styles.tableCol}>
+                &lt;Text style={styles.tableCell}>{campaña.nombre_campana}&lt;/Text>
+              &lt;/View>
+              {/* Celda: Objetivo Litros Sangre */}
+              &lt;View style={styles.tableCol}>
+                &lt;Text style={styles.tableCell}>
+                  {campaña.objetivo_litros_campana}
+                &lt;/Text>
+              &lt;/View>
+              {/* Celda: Fecha Inicio */}
+              &lt;View style={styles.tableCol}>
+                &lt;Text style={styles.tableCell}>
+                  {new Date(campaña.fecha_inicio_campana).toLocaleDateString("es-ES")}
+                &lt;/Text>
+              &lt;/View>
+              {/* Celda: Fecha Fin */}
+              &lt;View style={styles.tableCol}>
+                &lt;Text style={styles.tableCell}>
+                  {new Date(campaña.fecha_fin_campana).toLocaleDateString("es-ES")}
+                &lt;/Text>
+              &lt;/View>
+              {/* Celda: Foto (comentada - no se utiliza actualmente) */}
+              {/* &lt;View style={styles.tableCol}>
+                &lt;Text style={styles.tableCell}>
+                  {director.photo_url ? "✓" : ""}
+                &lt;/Text>
+              &lt;/View> */}
+            &lt;/View>
+          ))}
+        &lt;/View>
+      &lt;/Page>
+    &lt;/Document>
+  );
+}
+
+export default ListadoCampañasParametrizadoPDF;
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-utils_generatePDF.html">utils/generatePDF</a></li></ul><h3>Global</h3><ul><li><a href="global.html#AltaCampa%25C3%25B1a">AltaCampaña</a></li><li><a href="global.html#AltaDonaciones">AltaDonaciones</a></li><li><a href="global.html#App">App</a></li><li><a href="global.html#BarraDeColor">BarraDeColor</a></li><li><a href="global.html#Dialogo">Dialogo</a></li><li><a href="global.html#Footer">Footer</a></li><li><a href="global.html#GraficaCampa%25C3%25B1as">GraficaCampañas</a></li><li><a href="global.html#Home">Home</a></li><li><a href="global.html#Inicio">Inicio</a></li><li><a href="global.html#ListadoCampa%25C3%25B1as">ListadoCampañas</a></li><li><a href="global.html#ListadoCampa%25C3%25B1asParametrizadas">ListadoCampañasParametrizadas</a></li><li><a href="global.html#ListadoCampa%25C3%25B1asParametrizadoPDF">ListadoCampañasParametrizadoPDF</a></li><li><a href="global.html#ListadoDonaciones">ListadoDonaciones</a></li><li><a href="global.html#ListadoDonacionesCard">ListadoDonacionesCard</a></li><li><a href="global.html#ListadoDonacionesParametrizado">ListadoDonacionesParametrizado</a></li><li><a href="global.html#ModificacionCampa%25C3%25B1a">ModificacionCampaña</a></li><li><a href="global.html#ModificacionDonacion">ModificacionDonacion</a></li><li><a href="global.html#Navbar">Navbar</a></li><li><a href="global.html#api">api</a></li><li><a href="global.html#mode">mode</a></li><li><a href="global.html#router">router</a></li><li><a href="global.html#setMode">setMode</a></li><li><a href="global.html#styles">styles</a></li><li><a href="global.html#useThemeStore">useThemeStore</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.5</a> on Mon Feb 09 2026 17:42:07 GMT+0100 (hora estándar de Europa central)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>
